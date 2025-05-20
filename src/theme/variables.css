@@ -1,0 +1,49 @@
+:root {
+  /* Backgrounds */
+  --color-bg: #2a2a2a;
+  --color-panel: #3c3c3c;
+  --color-footer: #171717;
+
+  /* Text */
+  --text-primary: #f1f1f1;
+  --text-muted: #999;
+
+  /* Grays */
+  --gray-50: #f9f9f9;
+  --gray-100: #e6e6e6;
+  --gray-300: #bdbdbd;
+  --gray-500: #7d7d7d;
+  --gray-700: #3c3c3c;
+  --gray-800: #2a2a2a;
+  --gray-900: #171717;
+
+  /* Accents */
+  --accent-gold: #caa84c;
+  --accent-blue: #4db0d6;
+}
+
+
+
+body, html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
+}
+
+ion-content {
+  --background: var(--color-bg);
+}
+
+ion-toolbar,
+ion-footer {
+  background-color: var(--color-panel);
+  color: var(--color-text);
+}
+
+h1, h2, h3 {
+  color: var(--primary-fg);
+}
+
+p {
+  color: var(--color-muted-text);
+}

@@ -1,0 +1,188 @@
+.mpg-bg {
+  --background: #0f0f0f;
+  padding: 24px;
+  text-align: center;
+  color: #ccc;
+  min-height: 100vh;
+  background-color: #0f0f0f;
+}
+
+.mpg-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  color: #e0e0e0;
+  letter-spacing: 1px;
+}
+
+.competition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.competition-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.competition-item:hover {
+  transform: translateY(-4px);
+}
+
+.circle-image-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #444;
+  background-color: #222;
+}
+
+.circle-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: transform 0.4s ease;
+}
+
+.circle-image-wrapper:hover .circle-image {
+  transform: scale(1.05);
+}
+
+.competition-label {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: bold;
+  color: #aaa;
+  background-color: #121212;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.players-text {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #999;
+}
+
+.more-btn {
+  --border-color: #999;
+  --color: #ccc;
+  --background-hover: #1e1e1e;
+  border: 1px solid #666;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.more-btn:hover {
+  background-color: #1e1e1e;
+}
+
+
+
+/* Shared Styles */
+.mpg-bg {
+  padding: 24px;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.toggle-label {
+  font-size: 14px;
+}
+
+/* Dark Theme */
+.theme-dark .mpg-bg {
+  background-color: #0f0f0f;
+  color: #ccc;
+}
+
+.theme-dark .mpg-title {
+  color: #e0e0e0;
+}
+
+.theme-dark .competition-item {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark .circle-image-wrapper {
+  border: 2px solid #444;
+  background-color: #222;
+}
+
+.theme-dark .competition-label {
+  background-color: #121212;
+  color: #aaa;
+  border: 1px solid #333;
+}
+
+.theme-dark .players-text {
+  color: #999;
+}
+
+.theme-dark .more-btn {
+  --color: #ccc;
+  border: 1px solid #666;
+}
+
+/* Light Theme */
+.theme-light .mpg-bg {
+  background-color: #f9f9f9;
+  color: #222;
+}
+
+.theme-light .mpg-title {
+  color: #111;
+}
+
+.theme-light .competition-item {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.theme-light .circle-image-wrapper {
+  border: 2px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+.theme-light .competition-label {
+  background-color: #f5f5f5;
+  color: #555;
+  border: 1px solid #ccc;
+}
+
+.theme-light .players-text {
+  color: #666;
+}
+
+.theme-light .more-btn {
+  --color: #111;
+  border: 1px solid #999;
+}

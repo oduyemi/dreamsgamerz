@@ -1,0 +1,10 @@
+body, html,
+.IonToolbar,
+.IonTitle,
+.IonContent,
+.IonFooter,
+.IconButton,
+.Avatar,
+.Typography {
+  all: unset;
+}
