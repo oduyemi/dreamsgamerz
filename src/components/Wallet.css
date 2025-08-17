@@ -1,0 +1,40 @@
+.wallet-page {
+  --color-accent: #6a45ff;
+  --color-panel: #1e1e1e;
+  --background-primary: #121212;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --card-gradient-start: rgba(106, 69, 255, 0.15);
+  --card-gradient-end: rgba(106, 69, 255, 0.05);
+  --balance-gradient-start: #ffffff;
+  --balance-gradient-end: #c2b5ff;
+  --positive-bg: rgba(76, 175, 80, 0.2);
+  --positive-text: #4CAF50;
+  --progress-bg: rgba(255, 255, 255, 0.1);
+  
+  /* Transaction colors */
+  --deposit-bg: rgba(0, 191, 255, 0.15);
+  --deposit-color: #00BFFF;
+  --withdraw-bg: rgba(244, 67, 54, 0.15);
+  --withdraw-color: #F44336;
+  --win-bg: rgba(255, 215, 0, 0.15);
+  --win-color: #FFD700;
+  --transfer-color: #9C27B0;
+  --scan-color: #4CAF50;
+}
+
+.wallet-page.theme-light {
+  --color-panel: #ffffff;
+  --background-primary: #f5f5f7;
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.8);
+  --border-color: rgba(0, 0, 0, 0.12);
+  --hover-bg: rgba(0, 0, 0, 0.03);
+  --card-gradient-start: rgba(106, 69, 255, 0.08);
+  --card-gradient-end: rgba(106, 69, 255, 0.03);
+  --balance-gradient-start: #000000;
+  --balance-gradient-end: #4a3a9c;
+  --progress-bg: rgba(0, 0, 0, 0.05);
+}

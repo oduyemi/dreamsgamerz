@@ -1,10 +1,89 @@
-body, html,
-.IonToolbar,
-.IonTitle,
-.IonContent,
-.IonFooter,
-.IconButton,
-.Avatar,
-.Typography {
-  all: unset;
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+.token-bouncing {
+  width: 150px;
+  height: 150px;
+  animation: bounce 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(202, 168, 76, 0.7));
+  animation-play-state: running;
+  transition: transform 0.2s ease-out;
+}
+
+.token-bouncing:hover {
+  animation-play-state: paused;
+  transform: translateY(0) scale(1);
+}
+
+.token-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.token-wrapper:hover .token-bouncing {
+  animation-play-state: paused;
+  transform: translateY(0) scale(1);
+}
+
+
+.curved-text-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.curved-text-svg text {
+  fill: #caa84c;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.gamers-bg {
+  --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.curved-text-svg {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -14%;
+  left: -14%;
+  pointer-events: none;
+}
+
+.curved-text-svg text {
+  fill: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.86px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.header {
+  --ion-toolbar-background: #1A1A1A;
+  --ion-toolbar-border-color: rgba(202, 168, 76, 0.2);
+}
+
+/* Smooth transitions for all interactive elements */
+.IonIcon, .IconButton, .Avatar, .Typography {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Better scroll behavior */
+.IonContent {
+  --offset-bottom: auto !important;
+  --overflow: hidden;
+  overscroll-behavior-y: contain;
 }

@@ -23,6 +23,7 @@ import MovingPicture from './pages/MovingPicture';
 import UserWallet from './pages/Wallet';
 import UserProfile from './pages/Profile';
 import './theme/variables.css';
+import MovingPicturePlayGame from './components/MovingPictureGamePlay';
 
 
 
@@ -37,6 +38,7 @@ const App: React.FC = () => (
         <Route exact path="/games/moving-picture" component={MovingPicture} />
         <Route exact path="/wallet" component={UserWallet} />
         <Route exact path="/profile" component={UserProfile} />
+        <Route exact path="/games/moving-picture/single" component={MovingPicturePlayGame} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

@@ -8,7 +8,7 @@ const Competition: React.FC = () => {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Competition</IonTitle>
+            <IonTitle>Games</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>

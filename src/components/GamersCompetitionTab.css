@@ -1,98 +1,172 @@
 .gamers-bg {
-  --background: #121212;
-  padding: 16px;
-  color: #e0e0e0;
+  --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 .competition-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 5%;
+}
+
+.competition-header {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .competition-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #c0c0c0;
-  margin-top: 12px;
-  text-align: center !important;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(to right, #00d2ff, #3a7bd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* New grid container */
-.competition-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  width: 100%;
-  max-width: 960px;
+.title-icon {
+  margin-right: 15px;
+  font-size: 2.2rem;
 }
 
-@media (min-width: 600px) {
-  .competition-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 900px) {
-  .competition-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.competition-card {
-  border-radius: 16px;
-  background: #1a1a1a;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-}
-
-.highlight-card:hover {
-  transform: scale(1.02);
-  cursor: pointer;
-}
-
-.game-img {
-  width: 50%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
+.competition-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  max-width: 600px;
   margin: 0 auto;
 }
 
-.highlight-title {
-  font-size: 20px;
-  text-align: center;
-  color: #caa84c;
+.competition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
 }
 
-.coming-card {
+.competition-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 180px;
-  background: #2a2a2a;
+  flex-direction: column;
 }
 
-.coming-soon-text {
-  font-size: 18px;
+.highlight-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.coming-soon-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.game-image-container {
+  position: relative;
+  padding: 20px;
+}
+
+.game-img {
+  max-width: 100%;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.prize-badge {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 215, 0, 0.9);
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.highlight-title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
   text-align: center;
-  color: #888;
+}
+
+.coming-soon-title {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.highlight-content, .coming-soon-content {
+  color: rgba(255, 255, 255, 0.7);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.highlight-content p, .coming-soon-content p {
+  margin-bottom: 20px;
+}
+
+.play-now-btn {
+  margin-top: auto;
+  --border-radius: 8px;
+  font-weight: 600;
+}
+
+.coming-soon-badge {
+  background: rgba(255, 165, 0, 0.2);
+  color: #ffa500;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 165, 0, 0.3);
 }
 
 .more-slot-wrapper {
-  margin-top: 10px;
+  text-align: center;
+  margin-top: 30px;
 }
 
 .more-slot-btn {
-  border-radius: 12px;
-  border: 1px solid #888;
-  color: #888;
-  text-transform: none;
-  font-weight: 500;
+  --border-width: 2px;
+  --border-radius: 8px;
+  font-weight: 600;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+  --padding-start: 30px;
+  --padding-end: 30px;
 }
-.more-slot-btn:hover {
-  background-color: #888;
-  color: #121212;
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .competition-title {
+    font-size: 2rem;
+  }
+  
+  .competition-grid {
+    grid-template-columns: 1fr;
+  }
 }
