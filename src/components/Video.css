@@ -1,0 +1,17 @@
+
+.header {
+  --ion-toolbar-background: #fff;
+  --ion-toolbar-border-color: rgba(202, 168, 76, 0.2);
+}
+
+/* Smooth transitions for all interactive elements */
+.IonIcon, .IconButton, .Avatar, .Typography {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Better scroll behavior */
+.IonContent {
+  --offset-bottom: auto !important;
+  --overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}

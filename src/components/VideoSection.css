@@ -1,79 +1,156 @@
+/* Section wrapper */
 .video-section {
-  margin-bottom: 2rem;
-  padding-left: 1rem;
+  margin: 3rem 1rem;
+  background: #fff; /* ✅ force white */
 }
 
-.video-section-title {
-  color: #caa84c;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0 0 0.75rem 0;
+/* Section Header */
+.video-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.video-tag {
+  background: linear-gradient(135deg, #ff4d4f, #ff8c42);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-right: 0.75rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-.video-row {
-  display: flex;
-  gap: 0.75rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory; /* Snap to items */
-  padding-bottom: 0.5rem;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
-}
-
-.video-row::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-.video-card {
-  flex: 0 0 auto;
-  width: 180px;
-  height: 270px;
-  border-radius: 12px;
-  overflow: hidden;
+.video-section-title {
+  flex: 1;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #111;
   position: relative;
-  scroll-snap-align: start; /* Snap point */
-  background: #1a1a1a;
-  cursor: pointer;
-  transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  letter-spacing: 0.5px;
 }
 
+.video-section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #010156, #e65d0f);
+  transition: width 0.3s ease;
+}
+
+.video-section-header:hover .video-section-title::after {
+  width: 100px;
+}
+
+/* View All Button */
+.view-all-btn {
+  background: #010156;
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+  border: none;
+}
+.view-all-btn:hover {
+  background: #e65d0f;
+  transform: scale(1.05);
+}
+
+/* Grid */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card */
+.video-card {
+  cursor: pointer;
+  border-radius: 16px;
+  overflow-x: hidden;
+  position: relative;
+  background: #fff; /* ✅ white instead of #fafafa */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
 .video-card:hover {
-  transform: scale(1.07);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Thumbnail */
+.video-thumb-container {
+  position: relative;
 }
 
 .video-thumbnail {
   width: 100%;
-  height: 100%;
+  height: 220px;
   object-fit: cover;
-  display: block;
+  border-radius: 16px;
 }
 
+/* Rank Badge */
+.rank-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #ff4d4f, #ff8c42);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Rating */
+.rating-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.7); /* ✅ dark pill for visibility */
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Overlay (only over thumbnail, not whole card) */
 .video-overlay {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 6px 8px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  background: linear-gradient(transparent, rgba(0,0,0,0.7)); /* ✅ subtle dark fade */
+  padding: 10px;
+}
+
+.video-title {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #fff;
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-align: center;
+  display: block;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
-
-.video-player-container {
-  width: 100%;
-  height: calc(100vh - 56px); /* Fullscreen minus header */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: black;
+/* Modal override to stay white */
+ion-modal {
+  --background: #fff; /* ✅ white modal background */
 }
-
-.video-player-container iframe {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 8px;
+ion-content[color="dark"] {
+  --background: #fff !important; /* ✅ ensure white */
+  color: #111;
 }

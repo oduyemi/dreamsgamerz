@@ -24,6 +24,7 @@ import UserWallet from './pages/Wallet';
 import UserProfile from './pages/Profile';
 import './theme/variables.css';
 import MovingPicturePlayGame from './components/MovingPictureGamePlay';
+import { VideoPage } from './components/Video';
 
 
 
@@ -36,6 +37,7 @@ const App: React.FC = () => (
         <Route exact path="/" component={Home} />
         <Route exact path="/games" component={Competition} />
         <Route exact path="/games/moving-picture" component={MovingPicture} />
+        <Route exact path="/videos" component={VideoPage} />
         <Route exact path="/wallet" component={UserWallet} />
         <Route exact path="/profile" component={UserProfile} />
         <Route exact path="/games/moving-picture/single" component={MovingPicturePlayGame} />
