@@ -1,99 +1,251 @@
-.reels-container {
-  position: relative;
-  height: 60vh;
-  width: 100%;
-  overflow-x: hidden;
-  background: #ffffff; /* white background */
-  touch-action: pan-y;
-}
-
-.reels-video {
-  height: 60%;
-  width: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  margin: auto;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease-in-out;
-}
-
-.reels-video:active {
-  transform: scale(0.98);
-}
-
-.reels-overlay {
-  position: absolute;
-  bottom: 60px;
-  left: 16px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 12px;
-  max-width: 75%;
-  backdrop-filter: blur(6px);
-}
-
+/* Wrapper & Header */
 .reels-wrapper {
   background: #fff;
-  padding: 24px;
+  padding: 24px 16px;
   max-width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 }
 
-.reels-heading {
-  font-weight: 800;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  background: linear-gradient(90deg, #ff512f, #dd2476);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.reels-header {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+/* Pulsing Heading */
+.reels-heading-left {
+  font-weight: 900;
   font-size: 2rem;
-  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #260202;
+  position: relative;
+  z-index: 2;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
 }
 
+/* Subheading */
+.reels-subheading-left {
+  font-size: 1rem;
+  color: #555;
+  opacity: 0.9;
+  margin-top: 4px;
+  z-index: 2;
+  position: relative;
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #b1840a, #e6a117);
+  box-shadow: 0 0 8px #f04cff, 0 0 15px #3c0c7c;
+  animation: particle-move 6s linear infinite;
+}
+
+.particle:nth-child(1) { top: 0%; left: 20%; animation-duration: 5s; }
+.particle:nth-child(2) { top: 10%; left: 80%; animation-duration: 6s; }
+.particle:nth-child(3) { top: 50%; left: 0%; animation-duration: 7s; }
+.particle:nth-child(4) { top: 80%; left: 30%; animation-duration: 8s; }
+.particle:nth-child(5) { top: 40%; left: 70%; animation-duration: 9s; }
+
+/* Particle Animation */
+@keyframes particle-move {
+  0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity:1; }
+  25%  { transform: translate(10px,-10px) rotate(90deg) scale(1.2); opacity:0.8; }
+  50%  { transform: translate(-10px,10px) rotate(180deg) scale(1); opacity:0.6; }
+  75%  { transform: translate(10px,10px) rotate(270deg) scale(1.2); opacity:0.8; }
+  100% { transform: translate(0,0) rotate(360deg) scale(1); opacity:1; }
+}
+
+/* Heading Glow Animation */
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 5px #f4a506, 0 0 10px #f09413; }
+  100% { text-shadow: 0 0 10px #bf8208, 0 0 20px #bf8d02; }
+}
+
+/* Scroll Container */
 .reels-scroll-container {
   display: flex;
-  justify-content: center; /* center items on desktop */
   gap: 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: 10px;
-  scrollbar-width: none; /* Firefox */
+  padding: 16px;
+  scroll-padding: 16px;
+  scrollbar-width: none;
+  perspective: 1000px; /* adds depth for parallax */
 }
 
-.reels-scroll-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
+/* Reel Card */
 .reel-card {
+  position: relative;
   flex: 0 0 300px;
   height: 500px;
-  position: relative;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   scroll-snap-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   background: #000;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
+.reel-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+}
+
+/* Cover Image */
+.reel-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  transition: opacity 0.4s ease;
+}
+
+/* Play Icon Overlay */
+.reel-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: white;
+  opacity: 0.85;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.reel-card:hover .reel-play-icon {
+  opacity: 0;
+  transform: scale(0.8) translate(-50%, -50%);
+}
+
+/* Video */
+.reel-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.reel-card:hover .reel-video {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Glassmorphic Overlay */
+.reel-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Action Buttons */
+.reel-actions {
+  position: absolute;
+  right: 16px;
+  bottom: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.reel-action-btn {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 50%;
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s, background 0.3s, box-shadow 0.2s;
+}
+
+.reel-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+
+/* Video */
 .reel-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
+  transition: transform 0.3s ease-in-out;
 }
 
+.reel-video:hover {
+  transform: scale(1.02);
+}
+
+/* Overlay */
 .reel-overlay {
   position: absolute;
-  bottom: 12px;
+  bottom: 16px;
   left: 12px;
   color: #fff;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  max-width: 70%;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
-.reel-actions {
-  position: absolute;
-  right: 8px;
-  bottom: 40px;
-  align-items: center;
-  color: #fff;
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .reel-card {
+    flex: 0 0 260px;
+    height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reel-card {
+    flex: 0 0 220px;
+    height: 380px;
+  }
+
+  .reel-overlay {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+
+  .reels-heading-left {
+    font-size: 1.7rem;
+  }
+
+  .reels-subheading-left {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reel-card {
+    flex: 0 0 180px;
+    height: 320px;
+  }
 }

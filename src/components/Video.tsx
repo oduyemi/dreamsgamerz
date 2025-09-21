@@ -113,8 +113,8 @@ export const VideoPage = () => {
         {/* Reels */}
             <Reels />
         {/* Video sections */}
-        <VideoSection title="Latest Content" videos={mapToVideos(dummyYouTubeVideos)} />
         <VideoSection title="Most Viewed" videos={mapToVideos(dummyYouTubeVideos)} />
+        <VideoSection title="Recently Viewed" videos={mapToVideos(dummyYouTubeVideos)} />
         <VideoSection title="Recently Viewed" videos={mapToVideos(dummyYouTubeVideos)} />
         <VideoSection title="Content of the Month" videos={mapToVideos(dummyYouTubeVideos)} />
       </IonContent>    
