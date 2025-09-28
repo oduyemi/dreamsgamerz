@@ -1,116 +1,150 @@
-import React, { useState } from "react";
-import {
-  IonImg,
-  IonModal,
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
-} from "@ionic/react";
-import { close } from "ionicons/icons";
-import "./VideoSection.css";
+import React from "react";
+import { Box, Typography, Card, CardMedia, Chip, Stack } from "@mui/material";
 
 interface Video {
   id: number;
   title: string;
   thumbnail: string;
-  youtubeId?: string;
+  category?: string;
   rating?: number;
   rank?: number;
-  category?: string; // NEW
 }
 
 interface VideoSectionProps {
   title: string;
-  tag?: string;
   videos: Video[];
-  limit?: number; // NEW optional prop
-  onViewAll?: () => void; // callback for CTA
 }
 
-const VideoSection: React.FC<VideoSectionProps> = ({ 
-  title, 
-  tag, 
-  videos, 
-  limit = 6, 
-  onViewAll 
-}) => {
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const previewVideos = videos.slice(0, limit);
+export const VideoSection: React.FC<VideoSectionProps> = ({ title, videos }) => {
   return (
-    <div className="video-section">
-      {/* Header */}
-      <div className="video-section-header">
-        {tag && <span className="video-tag">{tag}</span>}
-        <h2 className="video-section-title">{title}</h2>
-        <button className="view-all-btn" onClick={onViewAll}>
-          Check Full List
-        </button>
-      </div>
-
-      {/* Grid */}
-      <div className="video-grid">
-        {previewVideos.map((video) => (
-          <div
-            key={video.id}
-            className="video-card"
-            onClick={() => setSelectedVideo(video)}
-          >
-            <div className="video-thumb-container">
-              <IonImg
-                src={video.thumbnail}
-                alt={video.title}
-                className="video-thumbnail"
-              />
-              {video.rank && (
-                <span className="rank-badge">TOP {video.rank.toString().padStart(2, "0")}</span>
-              )}
-              {video.rating && (
-                <span className="rating-badge">{video.rating}</span>
-              )}
-              <div className="video-overlay">
-                <span className="video-title">{video.title}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modal for playing video */}
-      <IonModal
-        isOpen={!!selectedVideo}
-        onDidDismiss={() => setSelectedVideo(null)}
+    <Box sx={{ px: { xs: 2, sm: 4 }, py: 3, background: "#fff" }}>
+      {/* Section Title */}
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 700,
+          color: "#1A1A1A",
+          mb: 2,
+          letterSpacing: "0.5px",
+        }}
       >
-        <IonHeader>
-          <IonToolbar color="dark">
-            <IonTitle>{selectedVideo?.title}</IonTitle>
-            <IonButtons slot="end">
-              <IonButton onClick={() => setSelectedVideo(null)}>
-                <IonIcon icon={close} />
-              </IonButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen color="dark">
-          {selectedVideo && (
-            <div className="video-player-container">
-              <iframe
-                width="100%"
-                height="100%"
-                src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1`}
-                title={selectedVideo.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )}
-        </IonContent>
-      </IonModal>
-    </div>
+        {title}
+      </Typography>
+
+      {/* Horizontal Scroll Row */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          overflowX: "auto",
+          scrollSnapType: "x mandatory",
+          pb: 1,
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollbarWidth: "none",
+        }}
+      >
+        {videos.map((video) => (
+          <Card
+            key={video.id}
+            sx={{
+              flex: "0 0 auto",
+              width: { xs: 160, sm: 200, md: 220 },
+              borderRadius: 3,
+              boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+              cursor: "pointer",
+              position: "relative",
+              scrollSnapAlign: "start",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0px 8px 20px rgba(0,0,0,0.15)",
+              },
+            }}
+          >
+            {/* Thumbnail */}
+            <CardMedia
+              component="img"
+              height="120"
+              image={video.thumbnail}
+              alt={video.title}
+              sx={{ borderRadius: 3 }}
+            />
+
+            {/* Overlay Info */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                bgcolor: "rgba(0,0,0,0.5)",
+                color: "#fff",
+                px: 1,
+                py: 0.5,
+                borderBottomLeftRadius: 12,
+                borderBottomRightRadius: 12,
+              }}
+            >
+              <Typography
+                variant="body2"
+                noWrap
+                sx={{ fontWeight: 600 }}
+              >
+                {video.title}
+              </Typography>
+            </Box>
+
+            {/* Rank Badge */}
+            {video.rank && (
+              <Chip
+                label={`TOP ${video.rank.toString().padStart(2, "0")}`}
+                size="small"
+                color="secondary"
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  left: 8,
+                  bgcolor: "linear-gradient(135deg, #ff4d4f, #ff8c42)",
+                  color: "#fff",
+                  fontWeight: 700,
+                }}
+              />
+            )}
+
+            {/* Rating Badge */}
+            {video.rating && (
+              <Chip
+                label={video.rating}
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  bgcolor: "rgba(0,0,0,0.7)",
+                  color: "#fff",
+                  fontWeight: 600,
+                }}
+              />
+            )}
+
+            {/* Category Tag */}
+            {video.category && (
+              <Chip
+                label={video.category}
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 36,
+                  left: 8,
+                  bgcolor: "#caa84c",
+                  color: "#fff",
+                  fontWeight: 600,
+                }}
+              />
+            )}
+          </Card>
+        ))}
+      </Box>
+    </Box>
   );
 };
-export default VideoSection;
