@@ -7,7 +7,6 @@ import {
   IonFooter,
   IonIcon,
 } from "@ionic/react";
-import { useState } from "react";
 import { VideoSection } from "./VideoSection";
 import { IconButton, Stack, Typography, Paper } from "@mui/material";
 import { useHistory, useLocation } from "react-router";
@@ -32,7 +31,7 @@ const mapToVideos = (arr: typeof dummyYouTubeVideos) =>
     youtubeId: vid.youtubeId,
   }));
 
-export const VideoPage = () => {
+export const AnimationVideo = () => {
   const history = useHistory();
   const location = useLocation();
 
@@ -74,19 +73,7 @@ export const VideoPage = () => {
 
         {/* Sections */}
         <VideoSection
-          title="Most Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Recently Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Trending Now"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Content of the Month"
+          title="Animations"
           videos={mapToVideos(dummyYouTubeVideos)}
         />
       </IonContent>

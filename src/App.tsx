@@ -25,6 +25,10 @@ import UserProfile from './pages/Profile';
 import './theme/variables.css';
 import MovingPicturePlayGame from './components/MovingPictureGamePlay';
 import { VideoPage } from './components/Video';
+import { Short } from './components/ShortVideo';
+import { Funny } from './components/FunnyVideo';
+import { Inspire } from './components/InspiringVideo';
+import { AnimationVideo } from './components/AnimationVideo';
 
 
 
@@ -38,6 +42,10 @@ const App: React.FC = () => (
         <Route exact path="/games" component={Competition} />
         <Route exact path="/games/moving-picture" component={MovingPicture} />
         <Route exact path="/videos" component={VideoPage} />
+        <Route exact path="/videos/shorts" component={Short} />
+        <Route exact path="/videos/funny-videos" component={Funny} />
+        <Route exact path="/videos/inspiration" component={Inspire} />
+        <Route exact path="/videos/animations" component={AnimationVideo} />
         <Route exact path="/wallet" component={UserWallet} />
         <Route exact path="/profile" component={UserProfile} />
         <Route exact path="/games/moving-picture/single" component={MovingPicturePlayGame} />

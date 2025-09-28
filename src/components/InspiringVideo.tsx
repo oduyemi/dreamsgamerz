@@ -7,9 +7,8 @@ import {
   IonFooter,
   IonIcon,
 } from "@ionic/react";
-import { useState } from "react";
 import { VideoSection } from "./VideoSection";
-import { IconButton, Stack, Typography, Paper } from "@mui/material";
+import { IconButton, Stack, Typography, Paper, Box } from "@mui/material";
 import { useHistory, useLocation } from "react-router";
 import { gameController, home, image, person, wallet } from "ionicons/icons";
 import { VideoHeader } from "./VideoHeader";
@@ -32,7 +31,7 @@ const mapToVideos = (arr: typeof dummyYouTubeVideos) =>
     youtubeId: vid.youtubeId,
   }));
 
-export const VideoPage = () => {
+export const Inspire = () => {
   const history = useHistory();
   const location = useLocation();
 
@@ -50,6 +49,7 @@ export const VideoPage = () => {
       <IonHeader>
         <IonToolbar
           style={{
+
             backgroundColor: "#fff",
             borderBottom: "1px solid rgba(202, 168, 76, 0.2)",
             boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
@@ -73,22 +73,12 @@ export const VideoPage = () => {
         <VideoHeader />
 
         {/* Sections */}
-        <VideoSection
-          title="Most Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Recently Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Trending Now"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Content of the Month"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
+        <Box className="mx-auto">
+            <VideoSection
+            title="Inspiring Videos"
+            videos={mapToVideos(dummyYouTubeVideos)}
+            />
+        </Box>
       </IonContent>
 
       {/* Bottom Nav */}

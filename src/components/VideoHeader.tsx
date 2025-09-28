@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -10,7 +11,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { keyframes } from "@mui/system";
-import { ReelsModal } from "./ReelsModal"; 
+import { ReelsModal } from "./ReelsModal";
+
 // Animation for shimmer/light sweep
 const shimmer = keyframes`
   0% { background-position: -200% center; }
@@ -21,10 +23,14 @@ const shimmer = keyframes`
 export const VideoHeader: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [openReels, setOpenReels] = useState(false);
 
-  const menuItems = ["Short Drama", "Funny", "Animation", "Inspiring"];
+  const menuItems: { label: string; path: string }[] = [
+    { label: "Short Drama", path: "/videos/shorts" },
+    { label: "Funny", path: "/videos/funny-videos" },
+    { label: "Animation", path: "/videos/animations" },
+    { label: "Inspiring", path: "/videos/inspiration" },
+  ];
 
   return (
     <>
@@ -35,7 +41,7 @@ export const VideoHeader: React.FC = () => {
         sx={{
           backdropFilter: "blur(8px)",
           borderBottom: "1px solid rgba(0,0,0,0.08)",
-          background: "rgba(255, 255, 255, 0.8)", // light glass effect
+          background: "rgba(255, 255, 255, 0.8)",
         }}
       >
         <Toolbar
@@ -47,16 +53,18 @@ export const VideoHeader: React.FC = () => {
           }}
         >
           {/* Left: Logo/Title */}
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: "bold",
-              letterSpacing: "0.5px",
-              color: "black",
-            }}
-          >
-            🎬 VideoHub
-          </Typography>
+          <Link to="/videos" style={{ textDecoration: "none"}}>
+            <Typography
+                variant="h6"
+                sx={{
+                fontWeight: "bold",
+                letterSpacing: "0.5px",
+                color: "black",
+                }}
+            >
+                🎬 VideoHub
+            </Typography>
+          </Link>
 
           {/* Middle: Menu */}
           <Box
@@ -71,8 +79,9 @@ export const VideoHeader: React.FC = () => {
           >
             {menuItems.map((item) => (
               <Button
-                key={item}
-                color="inherit"
+                key={item.label}
+                component={Link}
+                to={item.path}
                 sx={{
                   textTransform: "none",
                   fontWeight: 500,
@@ -84,7 +93,7 @@ export const VideoHeader: React.FC = () => {
                   },
                 }}
               >
-                {item}
+                {item.label}
               </Button>
             ))}
           </Box>
