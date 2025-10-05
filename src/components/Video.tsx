@@ -13,6 +13,7 @@ import { IconButton, Stack, Typography, Paper } from "@mui/material";
 import { useHistory, useLocation } from "react-router";
 import { gameController, home, image, person, wallet } from "ionicons/icons";
 import { VideoHeader } from "./VideoHeader";
+import { TrendingVideosSection } from "./TrendingVideos";
 
 // Dummy videos
 const dummyYouTubeVideos = [
@@ -73,6 +74,7 @@ export const VideoPage = () => {
         <VideoHeader />
 
         {/* Sections */}
+        <TrendingVideosSection />
         <VideoSection
           title="Most Viewed"
           videos={mapToVideos(dummyYouTubeVideos)}

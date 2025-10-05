@@ -1,396 +1,380 @@
+import React, { useState } from "react";
 import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonIcon,
-  IonButton,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel
-} from '@ionic/react';
+  Box, Stack, Typography, Paper, Button, IconButton, Divider,
+  Avatar, LinearProgress, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, useTheme, useMediaQuery
+} from "@mui/material";
 import {
-  wallet,
-  eye,
-  eyeOff,
-  arrowUpOutline,
-  arrowDownOutline,
-  swapHorizontalOutline,
-  qrCodeOutline,
-  cardOutline,
-  cashOutline,
-  trophyOutline
-} from 'ionicons/icons';
-import { useState } from 'react';
-import { 
-  Box, 
-  Stack, 
-  Typography, 
-  IconButton, 
-  Paper, 
-  useTheme, 
-  useMediaQuery,
-  Divider,
-  Badge,
-  Avatar,
-  LinearProgress
-} from '@mui/material';
-import { motion } from 'framer-motion';
-import './Wallet.css'; 
+  Visibility, VisibilityOff, ArrowDownward, ArrowUpward,
+  SwapHoriz, CreditCard, MonetizationOn, AccountBalance
+} from "@mui/icons-material";
 
-export const Wallet = () => {
+type TransactionType = "deposit" | "withdrawal" | "convert" | "win";
+
+interface Transaction {
+  id: number;
+  type: TransactionType;
+  amount: number;
+  date: string;
+}
+
+export const Wallet: React.FC = () => {
   const [showBalance, setShowBalance] = useState(true);
-  const [activeTab, setActiveTab] = useState('transactions');
+  const [convertOpen, setConvertOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+
+  const [coinBalance, setCoinBalance] = useState<number>(5000);
+  const [usdtBalance, setUsdtBalance] = useState<number>(50);
+  const [convertAmount, setConvertAmount] = useState<number>(0);
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
+  const [depositAmount, setDepositAmount] = useState<number>(0);
+
+
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Mock data
-  const transactions = [
-    { id: 1, type: 'deposit', amount: 500, date: 'Today, 10:45 AM', status: 'completed', currency: 'USD' },
-    { id: 2, type: 'withdrawal', amount: 150, date: 'Yesterday, 2:30 PM', status: 'completed', currency: 'USD' },
-    { id: 3, type: 'win', amount: 75, date: 'Mar 12, 9:15 AM', status: 'completed', currency: 'USD' },
-    { id: 4, type: 'deposit', amount: 200, date: 'Mar 10, 5:45 PM', status: 'pending', currency: 'USD' },
-  ];
+  const [transactions, setTransactions] = useState<Transaction[]>([
+    { id: 1, type: "deposit", amount: 200, date: "Today, 10:30 AM" },
+    { id: 2, type: "withdrawal", amount: 100, date: "Yesterday, 3:00 PM" },
+    { id: 3, type: "win", amount: 25, date: "Oct 1, 8:00 PM" },
+  ]);
 
-  const walletStats = {
-    balance: 1250,
-    weeklyChange: '+12.5%',
-    currency: 'USD',
-    goalProgress: 65
+  const totalBalance = (usdtBalance + coinBalance / 100).toFixed(2);
+  const convertedUSDT = convertAmount ? (convertAmount / 100).toFixed(2) : 0;
+
+  // --- Handlers with proper typing ---
+  const handleDeposit = (amount: number) => {
+    if (!amount || amount <= 0) return;
+    setUsdtBalance((prev) => prev + amount);
+    setTransactions((prev) => [
+      { id: Date.now(), type: "deposit", amount, date: "Now" },
+      ...prev,
+    ]);
+    setDepositOpen(false);
+  };
+
+  const handleWithdraw = (amount: number) => {
+    if (!amount || amount <= 0 || amount > usdtBalance) return;
+    setUsdtBalance((prev) => prev - amount);
+    setTransactions((prev) => [
+      { id: Date.now(), type: "withdrawal", amount, date: "Now" },
+      ...prev,
+    ]);
+    setWithdrawOpen(false);
+  };
+
+  const handleConvert = () => {
+    if (!convertAmount || convertAmount <= 0 || convertAmount > coinBalance)
+      return;
+    const usdt = convertAmount / 100;
+    setCoinBalance((prev) => prev - convertAmount);
+    setUsdtBalance((prev) => prev + usdt);
+    setTransactions((prev) => [
+      { id: Date.now(), type: "convert", amount: usdt, date: "Now" },
+      ...prev,
+    ]);
+    setConvertAmount(0);
+    setConvertOpen(false);
   };
 
   return (
-    <IonPage className="wallet-page">
+    <Box p={2} maxWidth={480} mx="auto">
       {/* Header */}
-      <IonHeader>
-        <IonToolbar style={{ 
-          backgroundColor: 'var(--color-panel)',
-          borderBottom: '1px solid var(--border-color)'
-        }}>
-          <IonTitle style={{ 
-            // color: 'var(--color-accent)', 
-            textAlign: 'center',
-            fontWeight: 600,
-            fontSize: isSmall ? '1.1rem' : '1.3rem'
-          }}>
-            <IonIcon icon={wallet} style={{ marginRight: 8 }} />
-            Wallet
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        textAlign="center"
+        gutterBottom
+      >
+        <MonetizationOn sx={{ mr: 1, color: "primary.main" }} />
+        Wallet
+      </Typography>
 
-      <IonContent fullscreen style={{ backgroundColor: 'var(--background-primary)' }}>
-        <Box px={2} pt={3} maxWidth={480} mx="auto">
-          {/* Balance Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                bgcolor: 'var(--color-panel)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-color)',
-                background: 'linear-gradient(135deg, var(--card-gradient-start), var(--card-gradient-end))',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
+      {/* Balance Card */}
+      <Paper sx={{ p: 3, borderRadius: 3, mb: 3, backgroundColor:"#e6b800" }} >
+        <Stack alignItems="center" spacing={1}>
+          <Typography variant="body2" color="text.secondary">
+            Total Balance
+          </Typography>
+
+          {showBalance ? (
+            <Typography
+              variant={isSmall ? "h5" : "h4"}
+              fontWeight="bold"
+              color="primary"
             >
-              <Box 
-                position="absolute" 
-                top={0} 
-                right={0} 
-                p={1}
-                onClick={() => setShowBalance(!showBalance)}
-                sx={{ cursor: 'pointer' }}
-              >
-                <IonIcon 
-                  icon={showBalance ? eyeOff : eye} 
-                  style={{ color: 'var(--text-primary)', opacity: 0.7 }} 
-                />
-              </Box>
+              ${totalBalance}
+            </Typography>
+          ) : (
+            <Typography variant="h4">•••••</Typography>
+          )}
 
-              <Stack spacing={2} alignItems="center">
-                <Typography 
-                  variant="body2" 
-                  color="var(--text-secondary)" 
-                  fontWeight="medium"
-                >
-                  Total Balance
-                </Typography>
-                
-                {showBalance ? (
-                  <>
-                    <Typography 
-                      fontSize={isSmall ? 32 : 40} 
-                      fontWeight="bold"
-                      sx={{
-                        background: 'linear-gradient(90deg, var(--balance-gradient-start), var(--balance-gradient-end))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent'
-                      }}
-                    >
-                      ${walletStats.balance.toLocaleString()}
-                    </Typography>
-                    <Badge
-                      color="success"
-                      badgeContent={walletStats.weeklyChange}
-                      sx={{
-                        '& .MuiBadge-badge': {
-                          right: -35,
-                          bgcolor: 'var(--positive-bg)',
-                          color: 'var(--positive-text)',
-                          fontWeight: 'bold'
-                        }
-                      }}
-                    >
-                      <Typography variant="caption" color="var(--text-secondary)">
-                        This week
-                      </Typography>
-                    </Badge>
-                  </>
-                ) : (
-                  <Typography 
-                    fontSize={isSmall ? 32 : 40} 
-                    fontWeight="bold"
-                    letterSpacing={4}
-                  >
-                    •••••••
-                  </Typography>
-                )}
-              </Stack>
+          <IconButton onClick={() => setShowBalance(!showBalance)} size="small">
+            {showBalance ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </Stack>
 
-              {/* Progress towards goal */}
-              <Box mt={3}>
-                <Stack direction="row" justifyContent="space-between" mb={1}>
-                  <Typography variant="caption" color="var(--text-secondary)">
-                    Savings Goal
-                  </Typography>
-                  <Typography variant="caption" fontWeight="bold" color="var(--color-accent)">
-                    {walletStats.goalProgress}%
-                  </Typography>
-                </Stack>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={walletStats.goalProgress} 
-                  sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    bgcolor: 'var(--progress-bg)',
-                    '& .MuiLinearProgress-bar': {
-                      bgcolor: 'var(--color-accent)'
-                    }
-                  }} 
-                />
-              </Box>
-            </Paper>
-          </motion.div>
+        <Divider sx={{ my: 2 }} />
 
-          {/* Quick Actions */}
-          <Stack 
-            direction="row" 
-            justifyContent="space-between" 
-            spacing={2} 
-            mt={3}
-            px={1}
-          >
-            <IonButton 
-              fill="clear" 
-              color="medium"
-              style={{
-                '--background-hover': 'var(--hover-bg)',
-                flexDirection: 'column',
-                height: 'auto',
-                padding: '12px 8px'
-              }}
-            >
-              <IonIcon 
-                icon={arrowDownOutline} 
-                style={{ 
-                  fontSize: 24,
-                  color: 'var(--deposit-color)',
-                  marginBottom: 4
-                }} 
-              />
-              <IonLabel style={{ fontSize: 12 }}>Deposit</IonLabel>
-            </IonButton>
+        <Stack direction="row" justifyContent="space-between">
+          <Box>
+            <Typography variant="body2" color="text.secondary">
+              USDT Balance
+            </Typography>
+            <Typography variant="h6" fontWeight="bold">
+              {showBalance ? `${usdtBalance.toFixed(2)} USDT` : "••••"}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body2" color="text.secondary">
+              Coin Balance
+            </Typography>
+            <Typography variant="h6" fontWeight="bold">
+              {showBalance ? `${coinBalance} Coins` : "••••"}
+            </Typography>
+          </Box>
+        </Stack>
 
-            <IonButton 
-              fill="clear" 
-              color="medium"
-              style={{
-                '--background-hover': 'var(--hover-bg)',
-                flexDirection: 'column',
-                height: 'auto',
-                padding: '12px 8px'
-              }}
-            >
-              <IonIcon 
-                icon={arrowUpOutline} 
-                style={{ 
-                  fontSize: 24,
-                  color: 'var(--withdraw-color)',
-                  marginBottom: 4
-                }} 
-              />
-              <IonLabel style={{ fontSize: 12 }}>Withdraw</IonLabel>
-            </IonButton>
+        <Box mt={3}>
+          <Typography variant="caption" color="text.secondary">
+            Goal Progress
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={65}
+            sx={{ height: 8, borderRadius: 4, mt: 0.5 }}
+          />
+        </Box>
+      </Paper>
 
-            <IonButton 
-              fill="clear" 
-              color="medium"
-              style={{
-                '--background-hover': 'var(--hover-bg)',
-                flexDirection: 'column',
-                height: 'auto',
-                padding: '12px 8px'
-              }}
-            >
-              <IonIcon 
-                icon={swapHorizontalOutline} 
-                style={{ 
-                  fontSize: 24,
-                  color: 'var(--transfer-color)',
-                  marginBottom: 4
-                }} 
-              />
-              <IonLabel style={{ fontSize: 12 }}>Transfer</IonLabel>
-            </IonButton>
+      {/* Quick Actions */}
+      <Stack direction="row" justifyContent="space-between" spacing={1} mb={3}>
+        <Button
+          startIcon={<ArrowDownward />}
+          fullWidth
+          variant="outlined"
+          onClick={() => setDepositOpen(true)}
+        >
+          Deposit
+        </Button>
+        <Button
+          startIcon={<ArrowUpward />}
+          fullWidth
+          variant="outlined"
+          color="error"
+          onClick={() => setWithdrawOpen(true)}
+        >
+          Withdraw
+        </Button>
+        <Button
+          startIcon={<SwapHoriz />}
+          fullWidth
+          variant="outlined"
+          color="secondary"
+          onClick={() => setConvertOpen(true)}
+        >
+          Convert
+        </Button>
+      </Stack>
 
-            <IonButton 
-              fill="clear" 
-              color="medium"
-              style={{
-                '--background-hover': 'var(--hover-bg)',
-                flexDirection: 'column',
-                height: 'auto',
-                padding: '12px 8px'
-              }}
-            >
-              <IonIcon 
-                icon={qrCodeOutline} 
-                style={{ 
-                  fontSize: 24,
-                  color: 'var(--scan-color)',
-                  marginBottom: 4
-                }} 
-              />
-              <IonLabel style={{ fontSize: 12 }}>Scan</IonLabel>
-            </IonButton>
-          </Stack>
+      {/* Transactions */}
+      <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+        Recent Transactions
+      </Typography>
 
-          {/* Tabs */}
-          <IonSegment 
-            value={activeTab} 
-            onIonChange={e => setActiveTab(e.detail.value as string)}
-            style={{
-              marginTop: 24,
-              '--background': 'var(--color-panel)',
-              '--background-checked': 'var(--color-accent)',
-              '--color': 'var(--text-secondary)',
-              '--color-checked': '#fff'
+      {transactions.map((txn) => (
+        <Paper
+          key={txn.id}
+          sx={{
+            p: 2,
+            mb: 1,
+            display: "flex",
+            alignItems: "center",
+            borderRadius: 2,
+          }}
+        >
+          <Avatar
+            sx={{
+              bgcolor:
+                txn.type === "deposit"
+                  ? "info.light"
+                  : txn.type === "withdrawal"
+                  ? "error.light"
+                  : txn.type === "convert"
+                  ? "secondary.light"
+                  : "warning.light",
+              color:
+                txn.type === "deposit"
+                  ? "info.dark"
+                  : txn.type === "withdrawal"
+                  ? "error.dark"
+                  : txn.type === "convert"
+                  ? "secondary.dark"
+                  : "warning.dark",
+              mr: 2,
             }}
           >
-            <IonSegmentButton value="transactions">
-              <IonLabel>Transactions</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="cards">
-              <IonLabel>Cards</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="history">
-              <IonLabel>History</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
+            {txn.type === "deposit" ? (
+              <ArrowDownward />
+            ) : txn.type === "withdrawal" ? (
+              <ArrowUpward />
+            ) : (
+              <SwapHoriz />
+            )}
+          </Avatar>
 
-          {/* Transactions List */}
-          <Box mt={2}>
-            {transactions.map((txn, index) => (
-              <motion.div
-                key={txn.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 2,
-                    mb: 1,
-                    borderRadius: 2,
-                    bgcolor: 'var(--color-panel)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: '1px solid var(--border-color)',
-                    transition: '0.2s',
-                    '&:hover': {
-                      bgcolor: 'var(--hover-bg)'
-                    }
-                  }}
-                >
-                  <Avatar
-                    sx={{
-                      bgcolor: txn.type === 'deposit' ? 'var(--deposit-bg)' : 
-                               txn.type === 'withdrawal' ? 'var(--withdraw-bg)' : 
-                               'var(--win-bg)',
-                      color: txn.type === 'deposit' ? 'var(--deposit-color)' : 
-                            txn.type === 'withdrawal' ? 'var(--withdraw-color)' : 
-                            'var(--win-color)',
-                      mr: 2,
-                      width: 40,
-                      height: 40
-                    }}
-                  >
-                    <IonIcon 
-                      icon={txn.type === 'deposit' ? arrowDownOutline : 
-                           txn.type === 'withdrawal' ? arrowUpOutline : 
-                           trophyOutline} 
-                      style={{ fontSize: 18 }} 
-                    />
-                  </Avatar>
-                  
-                  <Box flexGrow={1}>
-                    <Typography fontWeight="medium">
-                      {txn.type.charAt(0).toUpperCase() + txn.type.slice(1)}
-                    </Typography>
-                    <Typography variant="body2" color="var(--text-secondary)">
-                      {txn.date}
-                    </Typography>
-                  </Box>
-                  
-                  <Typography 
-                    fontWeight="bold"
-                    color={txn.type === 'withdrawal' ? 'var(--withdraw-color)' : 
-                          txn.type === 'deposit' ? 'var(--deposit-color)' : 
-                          'var(--win-color)'}
-                  >
-                    {txn.type === 'withdrawal' ? '-' : '+'}${txn.amount}
-                  </Typography>
-                </Paper>
-              </motion.div>
-            ))}
+          <Box flexGrow={1}>
+            <Typography fontWeight="medium" textTransform="capitalize">
+              {txn.type}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {txn.date}
+            </Typography>
           </Box>
+          <Typography
+            fontWeight="bold"
+            color={
+              txn.type === "withdrawal"
+                ? "error.main"
+                : txn.type === "deposit"
+                ? "info.main"
+                : "secondary.main"
+            }
+          >
+            {txn.type === "withdrawal" ? "-" : "+"}${txn.amount}
+          </Typography>
+        </Paper>
+      ))}
 
-          {/* Add Funds CTA */}
-          <Box mt={3} textAlign="center">
-            <IonButton 
-              expand="block" 
-              color="primary"
-              style={{
-                '--border-radius': '12px',
-                fontWeight: 500
-              }}
-            >
-              <IonIcon icon={cardOutline} slot="start" />
-              Add Payment Method
-            </IonButton>
-          </Box>
-        </Box>
-      </IonContent>
-    </IonPage>
+      <Button
+        fullWidth
+        variant="contained"
+        startIcon={<CreditCard />}
+        sx={{ mt: 2 }}
+      >
+        Add Payment Method
+      </Button>
+
+      {/* --- Modals --- */}
+
+      {/* Convert Modal */}
+      <Dialog open={convertOpen} onClose={() => setConvertOpen(false)}>
+        <DialogTitle>Convert Coins to USDT</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" mb={1}>
+            Conversion rate: <strong>100 Coins = 1 USDT</strong>
+          </Typography>
+          <TextField
+            fullWidth
+            type="number"
+            label="Amount in Coins"
+            value={convertAmount || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setConvertAmount(Number(e.target.value))
+            }
+            inputProps={{ min: 0, max: coinBalance }}
+            sx={{ mb: 2 }}
+          />
+          {convertAmount > 0 && (
+            <Typography variant="body2">
+              You will receive: <strong>{convertedUSDT} USDT</strong>
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConvertOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleConvert}
+            variant="contained"
+            disabled={!convertAmount || convertAmount <= 0}
+          >
+            Convert
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Deposit Modal */}
+      <Dialog open={depositOpen} onClose={() => setDepositOpen(false)}>
+        <DialogTitle>Deposit Funds</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" mb={2}>
+            Enter amount to deposit (USDT)
+          </Typography>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Amount (USDT)"
+            value={depositAmount || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setDepositAmount(Number(e.target.value))
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleDeposit(depositAmount);
+                setDepositAmount(0);
+              }
+            }}
+            inputProps={{ min: 0 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDepositOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              handleDeposit(depositAmount);
+              setDepositAmount(0);
+            }}
+            variant="contained"
+          >
+            Deposit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Withdraw Modal */}
+      <Dialog open={withdrawOpen} onClose={() => setWithdrawOpen(false)}>
+        <DialogTitle>Withdraw USDT</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" mb={1}>
+            Only your USDT balance can be withdrawn.
+          </Typography>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Amount (USDT)"
+            value={withdrawAmount || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setWithdrawAmount(Number(e.target.value))
+            }
+            inputProps={{ min: 0, max: usdtBalance }}
+          />
+
+          <Button
+            fullWidth
+            variant="outlined"
+            color="primary"
+            sx={{ mt: 2 }}
+            startIcon={<AccountBalance />}
+          >
+            Add Bank Details
+          </Button>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setWithdrawOpen(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleWithdraw(withdrawAmount)}
+            disabled={withdrawAmount <= 0}
+          >
+            Withdraw
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };

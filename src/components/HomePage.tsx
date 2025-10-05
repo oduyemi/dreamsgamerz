@@ -23,6 +23,8 @@ import {
 } from '@mui/material';
 import "./HomePage.css";
 import HomeToken from '/images/hometoken.png';
+import { GiTwoCoins } from 'react-icons/gi';
+
 
 export const HomePage = () => {
   const [showBalance, setShowBalance] = useState(true);
@@ -90,19 +92,39 @@ export const HomePage = () => {
     }}
   >
     <Grid container spacing={2} justifyContent="space-around">
-      {["Game Dollars", "USD Balance", "USD Earned"].map((label, index) => (
+      {["Game Dollars", "Coin Balance", "Coin Earned"].map((label, index) => (
         <Grid item xs={4} key={index}>
           <Stack spacing={0.5} alignItems="center">
             <Typography fontSize={12} color="var(--text-muted)">
               {label}
             </Typography>
             <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Typography
-                fontWeight="bold"
-                color={index === 0 ? "var(--accent-gold)" : "var(--accent-blue)"}
-              >
-                {showBalance ? `$${(index + 1) * 50}` : '••••'}
-              </Typography>
+              {showBalance ? (
+                index === 2 ? (
+                  <>
+                    <GiTwoCoins
+                      style={{
+                        fontSize: '18px',
+                        color: 'var(--accent-gold)',
+                        marginRight: '2px',
+                      }}
+                    />
+                    <Typography fontWeight="bold" color="var(--accent-blue)">
+                      {(index + 1) * 50}
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography
+                    fontWeight="bold"
+                    color={index === 0 ? "var(--accent-gold)" : "var(--accent-blue)"}
+                  >
+                    ${ (index + 1) * 50 }
+                  </Typography>
+                )
+              ) : (
+                <Typography>••••</Typography>
+              )}
+
               {index === 0 && (
                 <IonIcon
                   icon={showBalance ? eye : eyeOff}
