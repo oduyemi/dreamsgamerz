@@ -19,7 +19,9 @@ import {
   IconButton,
   Avatar,
   Grid,
-  Badge
+  Badge,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import "./HomePage.css";
 import HomeToken from '/images/hometoken.png';
@@ -29,6 +31,8 @@ import { GiTwoCoins } from 'react-icons/gi';
 export const HomePage = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(true);
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <IonPage>
@@ -38,12 +42,9 @@ export const HomePage = () => {
           borderBottom: '1px solid rgba(202, 168, 76, 0.2)',
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
         }}>
-          <IonTitle style={{ 
-            color: '#caa84c',
-            fontWeight: '700',
-            letterSpacing: '1px',
-            fontSize: '1.4rem'
-          }}>
+          <IonTitle 
+            style={{ color: '#caa84c', textAlign: 'center', fontWeight: 700, fontSize: isSmall ? '1.2rem' : '1.5rem' }}
+          >
             Dream Gamers
           </IonTitle>
         </IonToolbar>

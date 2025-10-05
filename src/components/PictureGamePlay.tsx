@@ -16,6 +16,7 @@ import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { trophy, close, checkmark, reload, play, stopwatch, warning } from 'ionicons/icons';
 import './PictureGamePlay.css';
 import axios from "axios";
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const MAX_TRIES = 5;
 const WINS_TO_ADVANCE = 2;
@@ -43,6 +44,8 @@ export const PictureGamePlay: React.FC = () => {
   const [currentImage, setCurrentImage] = useState<GameImage | null>(null);
   const controls = useAnimation();
   const imageRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   const getRandomImage = async (): Promise<string> => {
     try {
@@ -150,7 +153,7 @@ export const PictureGamePlay: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Picture Perfect</IonTitle>
+          <IonTitle style={{ color: '#caa84c', textAlign: 'center', fontWeight: 700, fontSize: isSmall ? '1.2rem' : '1.5rem' }}>Picture Perfect</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="gameplay-bg">

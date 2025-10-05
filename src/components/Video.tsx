@@ -7,9 +7,8 @@ import {
   IonFooter,
   IonIcon,
 } from "@ionic/react";
-import { useState } from "react";
 import { VideoSection } from "./VideoSection";
-import { IconButton, Stack, Typography, Paper } from "@mui/material";
+import { IconButton, Stack, Typography, Paper, useTheme, useMediaQuery } from "@mui/material";
 import { useHistory, useLocation } from "react-router";
 import { gameController, home, image, person, wallet } from "ionicons/icons";
 import { VideoHeader } from "./VideoHeader";
@@ -36,6 +35,8 @@ const mapToVideos = (arr: typeof dummyYouTubeVideos) =>
 export const VideoPage = () => {
   const history = useHistory();
   const location = useLocation();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   const navItems = [
     { label: "Home", icon: home, path: "/" },
@@ -57,12 +58,7 @@ export const VideoPage = () => {
           }}
         >
           <IonTitle
-            style={{
-              color: "#caa84c",
-              fontWeight: 700,
-              letterSpacing: "0.5px",
-              fontSize: "1.35rem",
-            }}
+            style={{ color: '#caa84c', textAlign: 'center', fontWeight: 700, fontSize: isSmall ? '1.2rem' : '1.5rem' }}
           >
             Videos
           </IonTitle>
