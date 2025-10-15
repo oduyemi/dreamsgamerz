@@ -1,7 +1,7 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { AppLayout } from '../components/AppLayout';
 import { GlobalStyles } from '@mui/material';
 import { HomePage } from '../components/HomePage';
+import { AppLayout } from '../components/AppLayout';
 
 const Home: React.FC = () => {
   return (
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
           <IonToolbar
             style={{
               backgroundColor: '#fff',
-              borderBottom: '1px solid rgba(202, 168, 76, 0.2)',
+              borderBottom: '1px solid rgba(202,168,76,0.2)',
               boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
             }}
           >
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             alignItems: 'center',
             flexDirection: 'column',
             minHeight: '100vh',
-            overflow: 'hidden',
+            overflowY: 'auto',
           }}
         >
           <HomePage />

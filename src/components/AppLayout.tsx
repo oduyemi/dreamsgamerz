@@ -1,11 +1,12 @@
-import { IonContent, IonFooter, IonPage, IonIcon } from '@ionic/react';
-import { IconButton, Stack, Typography, Box } from '@mui/material';
+import React from 'react';
+import { IonIcon } from '@ionic/react';
+import { IconButton, Stack, Typography, Box, Paper } from '@mui/material';
 import {
   home,
   gameController,
   image,
   wallet,
-  person
+  person,
 } from 'ionicons/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -18,55 +19,105 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
 
   const navItems = [
-    { label: "Home", icon: home, path: "/" },
-    { label: "Games", icon: gameController, path: "/games" },
-    { label: "Videos", icon: image, path: "/videos" },
-    { label: "Wallet", icon: wallet, path: "/wallet" },
-    { label: "Me", icon: person, path: "/profile" },
+    { label: 'Home', icon: home, path: '/' },
+    { label: 'Games', icon: gameController, path: '/games' },
+    { label: 'Videos', icon: image, path: '/videos' },
+    { label: 'Wallet', icon: wallet, path: '/wallet' },
+    { label: 'Me', icon: person, path: '/profile' },
   ];
 
   return (
-    <IonPage>
-      <IonContent fullscreen>{children}</IonContent>
-      <IonFooter>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+      }}
+    >
+      {/* Scrollable main area */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          pb: { xs: 10, sm: 11 }, // keep footer visible
+        }}
+      >
+        {children}
+      </Box>
+
+      {/* Fixed Footer Navigation */}
+      <Paper
+        elevation={8}
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          borderRadius: '16px 16px 0 0',
+          backgroundColor: '#111',
+          backdropFilter: 'blur(10px)',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+          zIndex: 1200,
+        }}
+      >
         <Box
-          display="flex"
-          justifyContent="space-around"
-          px={2}
-          py={1.5}
           sx={{
-            bgcolor: '#1A1A1A',
-            borderRadius: '16px 16px 0 0',
-            boxShadow: 'var(--shadow-lg)',
-            borderTop: '1px solid rgba(255,255,255,0.05)',
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            py: 1.2,
           }}
         >
           {navItems.map((item, i) => {
             const isActive = location.pathname === item.path;
+
             return (
-              <Stack key={i} alignItems="center" spacing={0.5}>
+              <Stack
+                key={i}
+                alignItems="center"
+                spacing={0.4}
+                sx={{
+                  cursor: 'pointer',
+                  color: isActive ? '#caa84c' : 'rgba(255,255,255,0.75)',
+                  transition: 'all 0.25s ease',
+                  '&:hover': {
+                    color: '#caa84c',
+                    transform: 'translateY(-3px)',
+                  },
+                }}
+                onClick={() => history.push(item.path)}
+              >
                 <IconButton
                   sx={{
-                    color: isActive ? 'var(--accent-gold)' : 'rgba(255,255,255,0.7)',
-                    p: 1.5,
-                    transition: 'all 0.25s ease',
-                    '&:hover': {
-                      color: isActive ? 'var(--accent-gold)' : '#00BFFF',
-                      transform: 'scale(1.15)',
-                      background: 'rgba(255,255,255,0.05)',
-                    },
+                    color: 'inherit',
+                    p: 1,
+                    '&:hover': { transform: 'scale(1.15)' },
+                    transition: 'transform 0.25s ease',
                   }}
-                  onClick={() => history.push(item.path)}
                 >
-                  <IonIcon icon={item.icon} style={{ fontSize: '22px' }} />
+                  <IonIcon icon={item.icon} style={{ fontSize: 22 }} />
                 </IconButton>
+
+                {isActive && (
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      backgroundColor: '#caa84c',
+                      boxShadow: '0 0 6px rgba(202,168,76,0.7)',
+                    }}
+                  />
+                )}
+
                 <Typography
-                  fontSize={10.5}
+                  variant="caption"
                   sx={{
-                    color: isActive ? 'var(--accent-gold)' : 'rgba(255,255,255,0.6)',
-                    fontWeight: isActive ? '600' : '400',
-                    letterSpacing: '0.5px',
+                    fontSize: 10,
                     textTransform: 'uppercase',
+                    fontWeight: isActive ? 600 : 400,
+                    letterSpacing: 0.4,
                   }}
                 >
                   {item.label}
@@ -75,7 +126,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             );
           })}
         </Box>
-      </IonFooter>
-    </IonPage>
+      </Paper>
+    </Box>
   );
 };

@@ -8,7 +8,7 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { VideoSection } from "./VideoSection";
-import { IconButton, Stack, Typography, Paper, useTheme, useMediaQuery } from "@mui/material";
+import { IconButton, Stack, Typography, Paper, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useHistory, useLocation } from "react-router";
 import { gameController, home, image, person, wallet } from "ionicons/icons";
 import { VideoHeader } from "./VideoHeader";
@@ -36,7 +36,7 @@ export const VideoPage = () => {
   const history = useHistory();
   const location = useLocation();
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navItems = [
     { label: "Home", icon: home, path: "/" },
@@ -58,7 +58,12 @@ export const VideoPage = () => {
           }}
         >
           <IonTitle
-            style={{ color: '#caa84c', textAlign: 'center', fontWeight: 700, fontSize: isSmall ? '1.2rem' : '1.5rem' }}
+            style={{
+              color: "#caa84c",
+              textAlign: "center",
+              fontWeight: 700,
+              fontSize: isSmall ? "1.2rem" : "1.5rem",
+            }}
           >
             Videos
           </IonTitle>
@@ -68,38 +73,23 @@ export const VideoPage = () => {
       {/* Content */}
       <IonContent fullscreen style={{ backgroundColor: "#fff" }}>
         <VideoHeader />
-
-        {/* Sections */}
         <TrendingVideosSection />
-        <VideoSection
-          title="Most Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Recently Viewed"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Trending Now"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
-        <VideoSection
-          title="Content of the Month"
-          videos={mapToVideos(dummyYouTubeVideos)}
-        />
+        <VideoSection title="Most Viewed" videos={mapToVideos(dummyYouTubeVideos)} />
+        <VideoSection title="Recently Viewed" videos={mapToVideos(dummyYouTubeVideos)} />
+        <VideoSection title="Trending Now" videos={mapToVideos(dummyYouTubeVideos)} />
+        <VideoSection title="Content of the Month" videos={mapToVideos(dummyYouTubeVideos)} />
       </IonContent>
 
       {/* Bottom Nav */}
       <IonFooter>
         <Paper
           elevation={6}
-          sx={{
+          style={{
             display: "flex",
             justifyContent: "space-around",
-            px: 2,
-            py: 1.2,
+            padding: "10px 16px",
             borderRadius: "16px 16px 0 0",
-            bgcolor: "#fff",
+            backgroundColor: "#fff",
             borderTop: "1px solid rgba(0,0,0,0.08)",
           }}
         >
@@ -108,26 +98,27 @@ export const VideoPage = () => {
             return (
               <Stack key={i} alignItems="center" spacing={0.5}>
                 <IconButton
-                  sx={{
+                  style={{
                     color: isActive ? "#caa84c" : "rgba(0,0,0,0.6)",
-                    p: 1.5,
+                    padding: 12,
                     transition: "all 0.25s ease",
-                    "&:hover": {
-                      color: "#e65d0f",
-                      transform: "scale(1.15)",
-                      background: "rgba(0,0,0,0.04)",
-                    },
                   }}
                   onClick={() => history.push(item.path)}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = isActive ? "#caa84c" : "#e65d0f")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = isActive ? "#caa84c" : "rgba(0,0,0,0.6)")
+                  }
                 >
-                  <IonIcon icon={item.icon} style={{ fontSize: "22px" }} />
+                  <IonIcon icon={item.icon} style={{ fontSize: 22 }} />
                 </IconButton>
                 <Typography
-                  fontSize={10.5}
-                  sx={{
+                  style={{
+                    fontSize: 10.5,
                     color: isActive ? "#caa84c" : "rgba(0,0,0,0.6)",
                     fontWeight: isActive ? 600 : 400,
-                    letterSpacing: "0.4px",
+                    letterSpacing: 0.4,
                     textTransform: "uppercase",
                   }}
                 >

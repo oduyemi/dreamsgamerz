@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Box, Stack, Typography, Paper, Button, IconButton, Divider,
   Avatar, LinearProgress, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, useTheme, useMediaQuery
+  DialogActions, TextField, useTheme, useMediaQuery, AppBar, Toolbar
 } from "@mui/material";
 import {
   Visibility, VisibilityOff, ArrowDownward, ArrowUpward,
@@ -23,13 +23,11 @@ export const Wallet: React.FC = () => {
   const [convertOpen, setConvertOpen] = useState(false);
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-
   const [coinBalance, setCoinBalance] = useState<number>(5000);
   const [usdtBalance, setUsdtBalance] = useState<number>(50);
   const [convertAmount, setConvertAmount] = useState<number>(0);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [depositAmount, setDepositAmount] = useState<number>(0);
-
 
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -43,7 +41,6 @@ export const Wallet: React.FC = () => {
   const totalBalance = (usdtBalance + coinBalance / 100).toFixed(2);
   const convertedUSDT = convertAmount ? (convertAmount / 100).toFixed(2) : 0;
 
-  // --- Handlers with proper typing ---
   const handleDeposit = (amount: number) => {
     if (!amount || amount <= 0) return;
     setUsdtBalance((prev) => prev + amount);
@@ -79,302 +76,354 @@ export const Wallet: React.FC = () => {
   };
 
   return (
-    <Box p={2} maxWidth={480} mx="auto">
-      {/* Header */}
-      <Typography
-        variant="h5"
-        fontWeight="bold"
-        textAlign="center"
-        gutterBottom
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
+      {/* --- Consistent App Header (Like Homepage) --- */}
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          backgroundColor: "#111",
+          borderBottom: "1px solid rgba(202,168,76,0.25)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        }}
       >
-        <MonetizationOn sx={{ mr: 1, color: "primary.main" }} />
-        Wallet
-      </Typography>
-
-      {/* Balance Card */}
-      <Paper sx={{ p: 3, borderRadius: 3, mb: 3, backgroundColor:"#e6b800" }} >
-        <Stack alignItems="center" spacing={1}>
-          <Typography variant="body2" color="text.secondary">
-            Total Balance
+        <Toolbar>
+          <Typography
+            variant="h6"
+            sx={{
+              flexGrow: 1,
+              textAlign: "center",
+              color: "#caa84c",
+              fontWeight: 700,
+              letterSpacing: 0.5,
+              fontSize: "1.5rem",
+            }}
+          >
+            Dream Gamers
           </Typography>
+        </Toolbar>
+      </AppBar>
 
-          {showBalance ? (
-            <Typography
-              variant={isSmall ? "h5" : "h4"}
-              fontWeight="bold"
-              color="primary"
-            >
-              ${totalBalance}
-            </Typography>
-          ) : (
-            <Typography variant="h4">•••••</Typography>
-          )}
-
-          <IconButton onClick={() => setShowBalance(!showBalance)} size="small">
-            {showBalance ? <VisibilityOff /> : <Visibility />}
-          </IconButton>
+      {/* --- Wallet Body --- */}
+      <Box sx={{ p: 2, maxWidth: 480, mx: "auto", backgroundColor: "#fff" }}>
+        {/* Header */}
+        <Stack alignItems="center" mb={3} mt={2}>
+          <MonetizationOn sx={{ fontSize: 40, color: "#caa84c", mb: 1 }} />
+          <Typography variant="h5" fontWeight="bold" color="#caa84c">
+            Wallet Overview
+          </Typography>
         </Stack>
 
-        <Divider sx={{ my: 2 }} />
-
-        <Stack direction="row" justifyContent="space-between">
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              USDT Balance
-            </Typography>
-            <Typography variant="h6" fontWeight="bold">
-              {showBalance ? `${usdtBalance.toFixed(2)} USDT` : "••••"}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              Coin Balance
-            </Typography>
-            <Typography variant="h6" fontWeight="bold">
-              {showBalance ? `${coinBalance} Coins` : "••••"}
-            </Typography>
-          </Box>
-        </Stack>
-
-        <Box mt={3}>
-          <Typography variant="caption" color="text.secondary">
-            Goal Progress
-          </Typography>
-          <LinearProgress
-            variant="determinate"
-            value={65}
-            sx={{ height: 8, borderRadius: 4, mt: 0.5 }}
-          />
-        </Box>
-      </Paper>
-
-      {/* Quick Actions */}
-      <Stack direction="row" justifyContent="space-between" spacing={1} mb={3}>
-        <Button
-          startIcon={<ArrowDownward />}
-          fullWidth
-          variant="outlined"
-          onClick={() => setDepositOpen(true)}
-        >
-          Deposit
-        </Button>
-        <Button
-          startIcon={<ArrowUpward />}
-          fullWidth
-          variant="outlined"
-          color="error"
-          onClick={() => setWithdrawOpen(true)}
-        >
-          Withdraw
-        </Button>
-        <Button
-          startIcon={<SwapHoriz />}
-          fullWidth
-          variant="outlined"
-          color="secondary"
-          onClick={() => setConvertOpen(true)}
-        >
-          Convert
-        </Button>
-      </Stack>
-
-      {/* Transactions */}
-      <Typography variant="subtitle1" fontWeight="bold" mb={1}>
-        Recent Transactions
-      </Typography>
-
-      {transactions.map((txn) => (
+        {/* Balance Card */}
         <Paper
-          key={txn.id}
           sx={{
-            p: 2,
-            mb: 1,
-            display: "flex",
-            alignItems: "center",
-            borderRadius: 2,
+            p: 3,
+            borderRadius: 4,
+            mb: 3,
+            background: "linear-gradient(145deg, #fff7e6, #fff3cc)",
+            boxShadow: "0 4px 16px rgba(202,168,76,0.2)",
           }}
         >
-          <Avatar
-            sx={{
-              bgcolor:
-                txn.type === "deposit"
-                  ? "info.light"
-                  : txn.type === "withdrawal"
-                  ? "error.light"
-                  : txn.type === "convert"
-                  ? "secondary.light"
-                  : "warning.light",
-              color:
-                txn.type === "deposit"
-                  ? "info.dark"
-                  : txn.type === "withdrawal"
-                  ? "error.dark"
-                  : txn.type === "convert"
-                  ? "secondary.dark"
-                  : "warning.dark",
-              mr: 2,
-            }}
-          >
-            {txn.type === "deposit" ? (
-              <ArrowDownward />
-            ) : txn.type === "withdrawal" ? (
-              <ArrowUpward />
-            ) : (
-              <SwapHoriz />
-            )}
-          </Avatar>
-
-          <Box flexGrow={1}>
-            <Typography fontWeight="medium" textTransform="capitalize">
-              {txn.type}
-            </Typography>
+          <Stack alignItems="center" spacing={1}>
             <Typography variant="body2" color="text.secondary">
-              {txn.date}
+              Total Balance
             </Typography>
+
+            {showBalance ? (
+              <Typography
+                variant={isSmall ? "h5" : "h4"}
+                fontWeight="bold"
+                color="#caa84c"
+              >
+                ${totalBalance}
+              </Typography>
+            ) : (
+              <Typography variant="h4">•••••</Typography>
+            )}
+
+            <IconButton onClick={() => setShowBalance(!showBalance)} size="small">
+              {showBalance ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </Stack>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Stack direction="row" justifyContent="space-between">
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                USDT Balance
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                {showBalance ? `${usdtBalance.toFixed(2)} USDT` : "••••"}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                Coin Balance
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                {showBalance ? `${coinBalance} Coins` : "••••"}
+              </Typography>
+            </Box>
+          </Stack>
+
+          <Box mt={3}>
+            <Typography variant="caption" color="text.secondary">
+              Progress toward next reward
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={65}
+              sx={{
+                height: 8,
+                borderRadius: 4,
+                mt: 0.5,
+                "& .MuiLinearProgress-bar": { backgroundColor: "#caa84c" },
+              }}
+            />
           </Box>
-          <Typography
-            fontWeight="bold"
-            color={
-              txn.type === "withdrawal"
-                ? "error.main"
-                : txn.type === "deposit"
-                ? "info.main"
-                : "secondary.main"
-            }
-          >
-            {txn.type === "withdrawal" ? "-" : "+"}${txn.amount}
-          </Typography>
         </Paper>
-      ))}
 
-      <Button
-        fullWidth
-        variant="contained"
-        startIcon={<CreditCard />}
-        sx={{ mt: 2 }}
-      >
-        Add Payment Method
-      </Button>
-
-      {/* --- Modals --- */}
-
-      {/* Convert Modal */}
-      <Dialog open={convertOpen} onClose={() => setConvertOpen(false)}>
-        <DialogTitle>Convert Coins to USDT</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" mb={1}>
-            Conversion rate: <strong>100 Coins = 1 USDT</strong>
-          </Typography>
-          <TextField
-            fullWidth
-            type="number"
-            label="Amount in Coins"
-            value={convertAmount || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setConvertAmount(Number(e.target.value))
-            }
-            inputProps={{ min: 0, max: coinBalance }}
-            sx={{ mb: 2 }}
-          />
-          {convertAmount > 0 && (
-            <Typography variant="body2">
-              You will receive: <strong>{convertedUSDT} USDT</strong>
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConvertOpen(false)}>Cancel</Button>
+        {/* Quick Actions */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          spacing={1.5}
+          mb={3}
+        >
           <Button
-            onClick={handleConvert}
-            variant="contained"
-            disabled={!convertAmount || convertAmount <= 0}
-          >
-            Convert
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Deposit Modal */}
-      <Dialog open={depositOpen} onClose={() => setDepositOpen(false)}>
-        <DialogTitle>Deposit Funds</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" mb={2}>
-            Enter amount to deposit (USDT)
-          </Typography>
-
-          <TextField
+            startIcon={<ArrowDownward />}
             fullWidth
-            type="number"
-            label="Amount (USDT)"
-            value={depositAmount || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setDepositAmount(Number(e.target.value))
-            }
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleDeposit(depositAmount);
-                setDepositAmount(0);
-              }
-            }}
-            inputProps={{ min: 0 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDepositOpen(false)}>Cancel</Button>
-          <Button
-            onClick={() => {
-              handleDeposit(depositAmount);
-              setDepositAmount(0);
-            }}
             variant="contained"
+            sx={{
+              backgroundColor: "#caa84c",
+              "&:hover": { backgroundColor: "#b8962e" },
+            }}
+            onClick={() => setDepositOpen(true)}
           >
             Deposit
           </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Withdraw Modal */}
-      <Dialog open={withdrawOpen} onClose={() => setWithdrawOpen(false)}>
-        <DialogTitle>Withdraw USDT</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" mb={1}>
-            Only your USDT balance can be withdrawn.
-          </Typography>
-
-          <TextField
-            fullWidth
-            type="number"
-            label="Amount (USDT)"
-            value={withdrawAmount || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setWithdrawAmount(Number(e.target.value))
-            }
-            inputProps={{ min: 0, max: usdtBalance }}
-          />
-
           <Button
+            startIcon={<ArrowUpward />}
             fullWidth
             variant="outlined"
-            color="primary"
-            sx={{ mt: 2 }}
-            startIcon={<AccountBalance />}
-          >
-            Add Bank Details
-          </Button>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setWithdrawOpen(false)}>Cancel</Button>
-          <Button
-            variant="contained"
             color="error"
-            onClick={() => handleWithdraw(withdrawAmount)}
-            disabled={withdrawAmount <= 0}
+            onClick={() => setWithdrawOpen(true)}
           >
             Withdraw
           </Button>
-        </DialogActions>
-      </Dialog>
+          <Button
+            startIcon={<SwapHoriz />}
+            fullWidth
+            variant="outlined"
+            color="secondary"
+            onClick={() => setConvertOpen(true)}
+          >
+            Convert
+          </Button>
+        </Stack>
+
+        {/* Transactions */}
+        <Typography
+          variant="subtitle1"
+          fontWeight="bold"
+          mb={1}
+          color="#caa84c"
+        >
+          Recent Transactions
+        </Typography>
+
+        {transactions.map((txn) => (
+          <Paper
+            key={txn.id}
+            sx={{
+              p: 2,
+              mb: 1,
+              display: "flex",
+              alignItems: "center",
+              borderRadius: 3,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              transition: "transform 0.2s ease",
+              "&:hover": { transform: "translateY(-2px)" },
+            }}
+          >
+            <Avatar
+              sx={{
+                bgcolor:
+                  txn.type === "deposit"
+                    ? "info.light"
+                    : txn.type === "withdrawal"
+                    ? "error.light"
+                    : txn.type === "convert"
+                    ? "secondary.light"
+                    : "warning.light",
+                color:
+                  txn.type === "deposit"
+                    ? "info.dark"
+                    : txn.type === "withdrawal"
+                    ? "error.dark"
+                    : txn.type === "convert"
+                    ? "secondary.dark"
+                    : "warning.dark",
+                mr: 2,
+              }}
+            >
+              {txn.type === "deposit" ? (
+                <ArrowDownward />
+              ) : txn.type === "withdrawal" ? (
+                <ArrowUpward />
+              ) : (
+                <SwapHoriz />
+              )}
+            </Avatar>
+
+            <Box flexGrow={1}>
+              <Typography fontWeight="medium" textTransform="capitalize">
+                {txn.type}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {txn.date}
+              </Typography>
+            </Box>
+            <Typography
+              fontWeight="bold"
+              color={
+                txn.type === "withdrawal"
+                  ? "error.main"
+                  : txn.type === "deposit"
+                  ? "info.main"
+                  : "secondary.main"
+              }
+            >
+              {txn.type === "withdrawal" ? "-" : "+"}${txn.amount}
+            </Typography>
+          </Paper>
+        ))}
+
+        <Button
+          fullWidth
+          variant="outlined"
+          startIcon={<CreditCard />}
+          sx={{
+            mt: 2,
+            borderColor: "#caa84c",
+            color: "#caa84c",
+            "&:hover": {
+              backgroundColor: "rgba(202,168,76,0.08)",
+              borderColor: "#b8962e",
+            },
+          }}
+        >
+          Add Payment Method
+        </Button>
+
+        {/* Convert Modal */}
+        <Dialog open={convertOpen} onClose={() => setConvertOpen(false)}>
+          <DialogTitle>Convert Coins to USDT</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" mb={1}>
+              Conversion rate: <strong>100 Coins = 1 USDT</strong>
+            </Typography>
+            <TextField
+              fullWidth
+              type="number"
+              label="Amount in Coins"
+              value={convertAmount || ""}
+              onChange={(e) => setConvertAmount(Number(e.target.value))}
+              inputProps={{ min: 0, max: coinBalance }}
+              sx={{ mb: 2 }}
+            />
+            {convertAmount > 0 && (
+              <Typography variant="body2">
+                You will receive: <strong>{convertedUSDT} USDT</strong>
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setConvertOpen(false)}>Cancel</Button>
+            <Button
+              onClick={handleConvert}
+              variant="contained"
+              sx={{ backgroundColor: "#caa84c", "&:hover": { backgroundColor: "#b8962e" } }}
+              disabled={!convertAmount || convertAmount <= 0}
+            >
+              Convert
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Deposit Modal */}
+        <Dialog open={depositOpen} onClose={() => setDepositOpen(false)}>
+          <DialogTitle>Deposit Funds</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" mb={2}>
+              Enter amount to deposit (USDT)
+            </Typography>
+
+            <TextField
+              fullWidth
+              type="number"
+              label="Amount (USDT)"
+              value={depositAmount || ""}
+              onChange={(e) => setDepositAmount(Number(e.target.value))}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDepositOpen(false)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                handleDeposit(depositAmount);
+                setDepositAmount(0);
+              }}
+              variant="contained"
+              sx={{ backgroundColor: "#caa84c", "&:hover": { backgroundColor: "#b8962e" } }}
+            >
+              Deposit
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Withdraw Modal */}
+        <Dialog open={withdrawOpen} onClose={() => setWithdrawOpen(false)}>
+          <DialogTitle>Withdraw USDT</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" mb={1}>
+              Only your USDT balance can be withdrawn.
+            </Typography>
+
+            <TextField
+              fullWidth
+              type="number"
+              label="Amount (USDT)"
+              value={withdrawAmount || ""}
+              onChange={(e) => setWithdrawAmount(Number(e.target.value))}
+              inputProps={{ min: 0, max: usdtBalance }}
+            />
+
+            <Button
+              fullWidth
+              variant="outlined"
+              color="primary"
+              sx={{ mt: 2 }}
+              startIcon={<AccountBalance />}
+            >
+              Add Bank Details
+            </Button>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => setWithdrawOpen(false)}>Cancel</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => handleWithdraw(withdrawAmount)}
+              disabled={withdrawAmount <= 0}
+            >
+              Withdraw
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </Box>
   );
 };
