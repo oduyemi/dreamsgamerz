@@ -10,7 +10,8 @@ import {
   person,
   shieldCheckmarkOutline,
   pencilOutline,
-  trophyOutline
+  trophyOutline,
+  arrowForwardOutline
 } from 'ionicons/icons';
 import {
   Stack,
@@ -33,10 +34,12 @@ import {
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 export const Profile = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const history = useHistory();
 
   const [user, setUser] = useState({
     name: 'Alex Johnson',
@@ -144,6 +147,21 @@ export const Profile = () => {
                     </Avatar>
                   </Badge>
 
+                  {/* Earn More Points CTA */}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      borderColor: '#caa84c',
+                      color: '#caa84c',
+                      textTransform: 'none',
+                      mt: 1,
+                      '&:hover': { backgroundColor: 'rgba(202,168,76,0.08)' }
+                    }}
+                  >
+                    Earn More Points
+                  </Button>
+
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography
                       sx={{
@@ -161,14 +179,15 @@ export const Profile = () => {
 
                   <Typography sx={{ color: 'text.secondary' }}>{user.email}</Typography>
 
-                  {/* Stats Row */}
+                  {/* Stats Row with spacing */}
                   <Paper
                     sx={{
                       mt: 2,
                       p: 2,
                       borderRadius: 2,
                       display: 'flex',
-                      justifyContent: 'space-around',
+                      justifyContent: 'space-evenly',
+                      gap: 2,
                       backgroundColor: 'rgba(202,168,76,0.05)'
                     }}
                   >
@@ -184,7 +203,8 @@ export const Profile = () => {
                     ))}
                   </Paper>
 
-                  <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center" mt={2}>
+                  {/* Referrals Chip + Arrow */}
+                  <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center" mt={2} alignItems="center">
                     <Chip
                       label={user.membership}
                       size="small"
@@ -202,6 +222,9 @@ export const Profile = () => {
                         color: '#333'
                       }}
                     />
+                    <IconButton size="small" onClick={() => history.push('/referral')}>
+                      <IonIcon icon={arrowForwardOutline} style={{ color: '#caa84c' }} />
+                    </IconButton>
                   </Stack>
 
                   <Typography
@@ -280,12 +303,7 @@ export const Profile = () => {
                   boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                 }}
               >
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mb={2}
-                >
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                   <Typography fontWeight="bold" color="#333">
                     Your Videos
                   </Typography>
@@ -344,6 +362,50 @@ export const Profile = () => {
                     </Paper>
                   ))}
                 </Stack>
+              </Paper>
+
+              {/* Ads Section */}
+              <Paper
+                sx={{
+                  p: 3,
+                  mb: 4,
+                  borderRadius: 3,
+                  border: '1px solid rgba(202,168,76,0.2)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                }}
+              >
+                <Typography fontWeight="bold" color="#333" mb={2}>
+                  Best way to make money
+                </Typography>
+
+                {['Short Drama Creators', 'Animation Creators'].map((type, index) => (
+                  <Paper
+                    key={index}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(202,168,76,0.05)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Typography>{type}</Typography>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      component="label"
+                      sx={{
+                        backgroundColor: '#caa84c',
+                        '&:hover': { backgroundColor: '#b79535' }
+                      }}
+                    >
+                      Upload Video
+                      <input hidden accept="video/*" type="file" />
+                    </Button>
+                  </Paper>
+                ))}
               </Paper>
 
               {/* Upload Video Dialog */}
