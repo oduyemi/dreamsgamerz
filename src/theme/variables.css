@@ -41,6 +41,7 @@ body, html {
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-y: auto;
 }
 
 h1, h2, h3 {

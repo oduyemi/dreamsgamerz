@@ -38,13 +38,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {/* Scrollable main area */}
       <Box
         sx={{
-          flex: 1,
+          flexGrow: 1,
+          height: 'calc(100vh - 70px)', // adjust 70px if your footer height changes
           overflowY: 'auto',
-          pb: { xs: 10, sm: 11 }, // keep footer visible
+          WebkitOverflowScrolling: 'touch',
+          pb: { xs: 10, sm: 11 },
         }}
       >
         {children}
       </Box>
+
 
       {/* Fixed Footer Navigation */}
       <Paper
