@@ -29,6 +29,7 @@ import { Short } from './components/ShortVideo';
 import { Funny } from './components/FunnyVideo';
 import { Inspire } from './components/InspiringVideo';
 import { AnimationVideo } from './components/AnimationVideo';
+import { AdminDashboard } from './components/AdminDashboard';
 
 
 
@@ -49,6 +50,9 @@ const App: React.FC = () => (
         <Route exact path="/wallet" component={UserWallet} />
         <Route exact path="/profile" component={UserProfile} />
         <Route exact path="/games/moving-picture/single" component={MovingPicturePlayGame} />
+
+        {/* Admin */}
+        <Route exact path="/admin/dashboard" component={AdminDashboard} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Box, Button, Typography, Paper } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { trophyOutline, timeOutline, gameControllerOutline, sparklesOutline } from 'ionicons/icons';
+import { trophyOutline, gameControllerOutline } from 'ionicons/icons';
 import { Link } from 'react-router-dom';
 import token from '/images/token.png';
 import { IonIcon } from '@ionic/react';
+
+
 
 interface Competition {
   id: number;
@@ -21,61 +24,82 @@ const competitions: Competition[] = [
     id: 1, 
     image: token, 
     title: "Moving Picture", 
-    description: "Test your reflexes with this fast-paced image matching game",
+    description: "Test your reflexes in this thrilling picture-matching challenge.",
     highlight: true, 
-    link: "/games/moving-picture",
+    link: "/games/moving-picture/",
     prize: "500 Tokens"
   },
   { 
     id: 2, 
     comingSoon: true,
     title: "Memory Challenge",
-    description: "Coming soon: An exciting memory-based competition",
+    description: "Coming soon: Train your mind in a battle of memory.",
   },
   { 
     id: 3, 
     comingSoon: true,
     title: "Speed Typing",
-    description: "Coming soon: Prove your typing speed against others",
+    description: "Coming soon: Race the clock and dominate the leaderboard.",
   },
 ];
 
 export const GamersCompetitionTab: React.FC = () => {
+  // DEMO MODE LOGIC
+  const [adsWatched, setAdsWatched] = useState(0);
+  const requiredAds = 5;
+
+  const handleWatchAd = () => {
+    if (adsWatched < requiredAds) {
+      setAdsWatched(prev => prev + 1);
+    }
+  };
+
+  const demoUnlocked = adsWatched >= requiredAds;
+
   return (
     <Box
       component={motion.div}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
-      sx={{ bgcolor: '#fff', minHeight: '100vh', p: 2 }}
+      sx={{
+        minHeight: '100vh',
+        p: 3,
+        bgcolor: "#ffffff", // WHITE BACKGROUND
+      }}
     >
       {/* Header */}
-      <Box textAlign="center" mb={4}>
+      <Box textAlign="center" mb={5}>
         <Typography
           variant="h4"
           component={motion.h1}
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          fontWeight={700}
+          fontWeight={800}
           mb={1}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          gap={1}
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            background: 'linear-gradient(45deg, #caa84c, #b89c55)',
+            backgroundClip: 'text',
+            color: 'transparent',
+          }}
         >
-          <IonIcon icon={gameControllerOutline} style={{ fontSize: 28 }} />
+          <IonIcon icon={gameControllerOutline} style={{ fontSize: 30 }} />
           Gamers Arena
         </Typography>
+
         <Typography
           component={motion.p}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           color="text.secondary"
-          maxWidth={600}
+          maxWidth={640}
           mx="auto"
+          fontSize={15}
         >
-          Compete against players worldwide and win amazing prizes
+          Compete. Win Rewards. Master your skills with Demo Mode.
         </Typography>
       </Box>
 
@@ -92,8 +116,8 @@ export const GamersCompetitionTab: React.FC = () => {
               component={motion.div}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.03, boxShadow: "0px 6px 20px rgba(0, 191, 255, 0.25)" }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.4, delay: index * 0.15 }}
               display="flex"
             >
               <Paper
@@ -102,28 +126,36 @@ export const GamersCompetitionTab: React.FC = () => {
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRadius: 3,
-                  p: 2,
-                  height: '100%', // makes all cards equal height
-                  background: item.highlight
-                    ? 'linear-gradient(145deg, #e0f7ff, #f0f9ff)'
-                    : item.comingSoon
-                    ? '#f5f5f5'
-                    : '#fff',
+                  borderRadius: 4,
+                  p: 3,
+                  height: '100%',
+                  background: item.highlight ? "#fff9ec" : "#ffffff",
+                  border: item.highlight
+                    ? "1px solid #caa84c"
+                    : "1px solid #eeeeee",
+                  boxShadow: item.highlight
+                    ? "0px 4px 20px rgba(202,168,76,0.25)"
+                    : "0px 4px 10px rgba(0,0,0,0.05)",
                 }}
               >
                 {item.image && (
                   <Box
                     component={Link}
-                    to={item.link || '#'}
+                    to={item.link ?? "#"}
                     mb={2}
                     textAlign="center"
+                    sx={{ textDecoration: "none" }}
                   >
                     <Box
                       component={motion.img}
                       src={item.image}
                       alt={item.title}
-                      sx={{ maxWidth: '100%', height: 160, borderRadius: 2, objectFit: 'contain' }}
+                      sx={{
+                        width: "100%",
+                        height: 160,
+                        borderRadius: 3,
+                        objectFit: 'contain',
+                      }}
                       whileHover={{ scale: 1.05 }}
                     />
                     {item.prize && (
@@ -132,13 +164,14 @@ export const GamersCompetitionTab: React.FC = () => {
                           mt: 1,
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 0.5,
+                          gap: 1,
                           px: 2,
-                          py: 0.5,
-                          bgcolor: 'gold',
+                          py: 0.6,
+                          background: 'linear-gradient(45deg,#caa84c,#e9d9a4)',
                           borderRadius: 3,
-                          fontWeight: 600,
+                          fontWeight: 700,
                           fontSize: 12,
+                          color: '#2d2d2d',
                         }}
                       >
                         <IonIcon icon={trophyOutline} />
@@ -148,16 +181,21 @@ export const GamersCompetitionTab: React.FC = () => {
                   </Box>
                 )}
 
+                {/* Title */}
                 <Typography
                   variant="h6"
-                  fontWeight={600}
+                  fontWeight={700}
                   textAlign="center"
                   mb={1}
-                  color={item.comingSoon ? 'text.secondary' : 'text.primary'}
+                  sx={{
+                    color: item.comingSoon ? '#888' : '#222',
+                    letterSpacing: 0.3,
+                  }}
                 >
                   {item.title}
                 </Typography>
 
+                {/* Description */}
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -168,27 +206,96 @@ export const GamersCompetitionTab: React.FC = () => {
                   {item.description}
                 </Typography>
 
-                <Button
-                  variant={item.comingSoon ? 'outlined' : 'contained'}
-                  disabled={!!item.comingSoon}
-                  sx={{ mt: 'auto', borderRadius: 2, backgroundColor: item.comingSoon ? 'transparent' : '#caa84c', color: item.comingSoon ? 'text.secondary' : '#fff', '&:hover': { backgroundColor: item.comingSoon ? 'transparent' : '#b5944a' } }}
-                  fullWidth
-                >
-                  {item.comingSoon ? 'Coming Soon' : 'Play Now'}
-                </Button>
+                {/* Play Now Button */}
+                <Box mb={1.5}>
+                  {item.comingSoon ? (
+                    <Button
+                      variant="outlined"
+                      disabled
+                      fullWidth
+                      sx={{
+                        borderRadius: 2,
+                        color: '#aaa',
+                        borderColor: '#ccc',
+                        py: 1.2,
+                      }}
+                    >
+                      Coming Soon
+                    </Button>
+                  ) : (
+                    <Link to={item.link ?? "#"} style={{ textDecoration: "none" }}>
+                      <Button
+                        fullWidth
+                        sx={{
+                          borderRadius: 2,
+                          py: 1.2,
+                          background: 'linear-gradient(45deg,#caa84c,#b5944a)',
+                          color: '#1b1b1b',
+                          fontWeight: 700,
+                          '&:hover': {
+                            background: 'linear-gradient(45deg,#dfc178,#b69548)',
+                          },
+                        }}
+                      >
+                        Play Now
+                      </Button>
+                    </Link>
+                  )}
+                </Box>
+
+                {/* Demo Mode Button (after 5 ads) */}
+                {!item.comingSoon && (
+                  <Button
+                    fullWidth
+                    onClick={demoUnlocked ? undefined : handleWatchAd}
+                    component={demoUnlocked ? Link : "button"}
+                    to={demoUnlocked ? "/games/demo/" + item.id : undefined}
+                    sx={{
+                      borderRadius: 2,
+                      py: 1.1,
+                      background: demoUnlocked
+                        ? "linear-gradient(45deg,#e0e0e0,#ffffff)"
+                        : "#f4f4f4",
+                      color: "#333",
+                      border: "1px solid #ddd",
+                      fontSize: 13,
+                      '&:hover': {
+                        background: demoUnlocked ? "#fafafa" : "#f0f0f0",
+                      },
+                    }}
+                  >
+                    {demoUnlocked
+                      ? "Try Demo Mode"
+                      : `Watch Ads: ${adsWatched}/${requiredAds}`}
+                  </Button>
+                )}
+
               </Paper>
             </Box>
           ))}
         </AnimatePresence>
       </Box>
 
-      {/* View All Competitions Button */}
-      <Box textAlign="center" mt={4}>
-        <Button variant="outlined" sx={{ borderRadius: 2, px: 4, py: 1.5, borderColor: '#caa84c', color: '#caa84c' }}>
+      {/* Footer Button */}
+      <Box textAlign="center" mt={5}>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: 2,
+            px: 5,
+            py: 1.5,
+            borderColor: '#caa84c',
+            color: '#caa84c',
+            fontWeight: 700,
+            '&:hover': {
+              borderColor: '#b5944a',
+              color: '#b5944a',
+            },
+          }}
+        >
           View All Competitions
         </Button>
       </Box>
     </Box>
   );
-
 };
