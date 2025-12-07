@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Box, Button, Typography, Paper } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trophyOutline, gameControllerOutline } from 'ionicons/icons';
-import { Link } from 'react-router-dom';
 import token from '/images/token.png';
 import { IonIcon } from '@ionic/react';
+import { IonRouterLink } from "@ionic/react";
+
 
 
 
@@ -26,7 +27,7 @@ const competitions: Competition[] = [
     title: "Moving Picture", 
     description: "Test your reflexes in this thrilling picture-matching challenge.",
     highlight: true, 
-    link: "/games/moving-picture/",
+    link: "/games/moving-picture",
     prize: "500 Tokens"
   },
   { 
@@ -140,7 +141,7 @@ export const GamersCompetitionTab: React.FC = () => {
               >
                 {item.image && (
                   <Box
-                    component={Link}
+                    component={IonRouterLink}
                     to={item.link ?? "#"}
                     mb={2}
                     textAlign="center"
@@ -223,23 +224,21 @@ export const GamersCompetitionTab: React.FC = () => {
                       Coming Soon
                     </Button>
                   ) : (
-                    <Link to={item.link ?? "#"} style={{ textDecoration: "none" }}>
-                      <Button
-                        fullWidth
-                        sx={{
-                          borderRadius: 2,
-                          py: 1.2,
-                          background: 'linear-gradient(45deg,#caa84c,#b5944a)',
-                          color: '#1b1b1b',
-                          fontWeight: 700,
-                          '&:hover': {
-                            background: 'linear-gradient(45deg,#dfc178,#b69548)',
-                          },
-                        }}
-                      >
-                        Play Now
-                      </Button>
-                    </Link>
+                    <Button
+                      component={IonRouterLink}
+                      href={item.link ?? "#"}
+                      routerDirection="forward"
+                      fullWidth
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.2,
+                        background: 'linear-gradient(45deg,#caa84c,#b5944a)',
+                        color: '#1b1b1b',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Play Now
+                    </Button>
                   )}
                 </Box>
 
@@ -248,7 +247,7 @@ export const GamersCompetitionTab: React.FC = () => {
                   <Button
                     fullWidth
                     onClick={demoUnlocked ? undefined : handleWatchAd}
-                    component={demoUnlocked ? Link : "button"}
+                    component={demoUnlocked ? IonRouterLink : "button"}
                     to={demoUnlocked ? "/games/demo/" + item.id : undefined}
                     sx={{
                       borderRadius: 2,

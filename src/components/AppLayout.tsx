@@ -1,21 +1,15 @@
-import React from 'react';
-import { IonIcon } from '@ionic/react';
-import { IconButton, Stack, Typography, Box, Paper } from '@mui/material';
-import {
-  home,
-  gameController,
-  image,
-  wallet,
-  person,
-} from 'ionicons/icons';
+import { IonPage, IonContent, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Box, Paper, Stack, IconButton, Typography } from '@mui/material';
+
+import { home, gameController, image, wallet, person } from 'ionicons/icons';
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const history = useHistory();
+  const history = useHistory(); // v5
   const location = useLocation();
 
   const navItems = [
@@ -27,29 +21,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#fff',
-      }}
-    >
-      {/* Scrollable main area */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          height: 'calc(100vh - 70px)', // adjust 70px if your footer height changes
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          pb: { xs: 10, sm: 11 },
-        }}
-      >
-        {children}
-      </Box>
+    <IonPage>
+      <IonContent fullscreen>
+        <Box
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: '#fff',
+            pb: '90px',
+          }}
+        >
+          {children}
+        </Box>
+      </IonContent>
 
-
-      {/* Fixed Footer Navigation */}
       <Paper
         elevation={8}
         sx={{
@@ -61,7 +47,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           backgroundColor: '#111',
           backdropFilter: 'blur(10px)',
           borderTop: '1px solid rgba(255,255,255,0.1)',
-          zIndex: 1200,
+          zIndex: 2000,
         }}
       >
         <Box
@@ -89,7 +75,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     transform: 'translateY(-3px)',
                   },
                 }}
-                onClick={() => history.push(item.path)}
+                onClick={() => history.push(item.path)} // v5 navigation
               >
                 <IconButton
                   sx={{
@@ -130,6 +116,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           })}
         </Box>
       </Paper>
-    </Box>
+    </IonPage>
   );
 };
