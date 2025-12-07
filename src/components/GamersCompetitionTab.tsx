@@ -3,11 +3,7 @@ import { Box, Button, Typography, Paper } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trophyOutline, gameControllerOutline } from 'ionicons/icons';
 import token from '/images/token.png';
-import { IonIcon } from '@ionic/react';
-import { IonRouterLink } from "@ionic/react";
-
-
-
+import { IonIcon, IonRouterLink } from '@ionic/react';
 
 interface Competition {
   id: number;
@@ -66,7 +62,7 @@ export const GamersCompetitionTab: React.FC = () => {
       sx={{
         minHeight: '100vh',
         p: 3,
-        bgcolor: "#ffffff", // WHITE BACKGROUND
+        bgcolor: "#ffffff",
       }}
     >
       {/* Header */}
@@ -139,10 +135,11 @@ export const GamersCompetitionTab: React.FC = () => {
                     : "0px 4px 10px rgba(0,0,0,0.05)",
                 }}
               >
+                {/* Image + Prize */}
                 {item.image && (
                   <Box
                     component={IonRouterLink}
-                    to={item.link ?? "#"}
+                    href={item.link ?? "#"}
                     mb={2}
                     textAlign="center"
                     sx={{ textDecoration: "none" }}
@@ -242,31 +239,43 @@ export const GamersCompetitionTab: React.FC = () => {
                   )}
                 </Box>
 
-                {/* Demo Mode Button (after 5 ads) */}
+                {/* Demo Mode Button */}
                 {!item.comingSoon && (
-                  <Button
-                    fullWidth
-                    onClick={demoUnlocked ? undefined : handleWatchAd}
-                    component={demoUnlocked ? IonRouterLink : "button"}
-                    to={demoUnlocked ? "/games/demo/" + item.id : undefined}
-                    sx={{
-                      borderRadius: 2,
-                      py: 1.1,
-                      background: demoUnlocked
-                        ? "linear-gradient(45deg,#e0e0e0,#ffffff)"
-                        : "#f4f4f4",
-                      color: "#333",
-                      border: "1px solid #ddd",
-                      fontSize: 13,
-                      '&:hover': {
-                        background: demoUnlocked ? "#fafafa" : "#f0f0f0",
-                      },
-                    }}
-                  >
-                    {demoUnlocked
-                      ? "Try Demo Mode"
-                      : `Watch Ads: ${adsWatched}/${requiredAds}`}
-                  </Button>
+                  demoUnlocked ? (
+                    <Button
+                      fullWidth
+                      component={IonRouterLink}
+                      href={`/games/demo/${item.id}`}
+                      routerDirection="forward"
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.1,
+                        background: "linear-gradient(45deg,#e0e0e0,#ffffff)",
+                        color: "#333",
+                        border: "1px solid #ddd",
+                        fontSize: 13,
+                        '&:hover': { background: "#fafafa" },
+                      }}
+                    >
+                      Try Demo Mode
+                    </Button>
+                  ) : (
+                    <Button
+                      fullWidth
+                      onClick={handleWatchAd}
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.1,
+                        background: "#f4f4f4",
+                        color: "#333",
+                        border: "1px solid #ddd",
+                        fontSize: 13,
+                        '&:hover': { background: "#f0f0f0" },
+                      }}
+                    >
+                      Watch Ads: {adsWatched}/{requiredAds}
+                    </Button>
+                  )
                 )}
 
               </Paper>
