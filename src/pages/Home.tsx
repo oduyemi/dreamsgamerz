@@ -1,59 +1,47 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { GlobalStyles } from '@mui/material';
 import { HomePage } from '../components/HomePage';
 import { AppLayout } from '../components/AppLayout';
 
 const Home: React.FC = () => {
   return (
-    <IonPage>
-      <AppLayout>
-        <GlobalStyles
-          styles={{
-            body: { backgroundColor: '#ffffff' },
-            '@keyframes bounce-subtle': {
-              '0%, 100%': { transform: 'translateY(0) scale(1)' },
-              '50%': { transform: 'translateY(-8px) scale(1.02)' },
-            },
-          }}
-        />
+    <AppLayout>
+      <GlobalStyles
+        styles={{
+          body: { backgroundColor: '#ffffff' },
+          '@keyframes bounce-subtle': {
+            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+            '50%': { transform: 'translateY(-8px) scale(1.02)' },
+          },
+        }}
+      />
 
-        <IonHeader>
-          <IonToolbar
-            style={{
-              backgroundColor: '#fff',
-              borderBottom: '1px solid rgba(202,168,76,0.2)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            }}
-          >
-            <IonTitle
-              style={{
-                color: '#caa84c',
-                textAlign: 'center',
-                fontWeight: 700,
-                fontSize: '1.5rem',
-              }}
-            >
-              Dream Gamers
-            </IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <div
+        style={{
+          backgroundColor: '#fff',
+          width: '100%',
+          padding: '16px 0',
+          textAlign: 'center',
+          borderBottom: '1px solid rgba(202,168,76,0.2)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        }}
+      >
+        <h1 style={{ color: '#caa84c', fontWeight: 700 }}>Dream Gamers</h1>
+      </div>
 
-        <IonContent
-          fullscreen
-          style={{
-            backgroundColor: '#ffffff',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            minHeight: '100vh',
-            overflowY: 'auto',
-          }}
-        >
-          <HomePage />
-        </IonContent>
-      </AppLayout>
-    </IonPage>
+      {/* Main page content */}
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          minHeight: 'calc(100vh - 90px)',
+        }}
+      >
+        <HomePage />
+      </div>
+    </AppLayout>
   );
 };
 
