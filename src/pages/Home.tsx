@@ -5,8 +5,8 @@ import { AppLayout } from '../components/AppLayout';
 
 const Home: React.FC = () => {
   return (
-    <AppLayout>
-      <IonPage>
+    <IonPage>
+      <AppLayout>
         <GlobalStyles
           styles={{
             body: { backgroundColor: '#ffffff' },
@@ -52,8 +52,8 @@ const Home: React.FC = () => {
         >
           <HomePage />
         </IonContent>
-      </IonPage>
-    </AppLayout>
+      </AppLayout>
+    </IonPage>
   );
 };
 
