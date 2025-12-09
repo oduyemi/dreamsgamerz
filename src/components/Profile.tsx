@@ -47,26 +47,12 @@ interface User {
   verified: boolean;
 }
 
-const [user, setUser] = useState<User>({
-  name: 'Alex Johnson',
-  email: 'alex.johnson@example.com',
-  membership: 'Premium',
-  points: 1250,
-  coins: 0,
-  following: 150,
-  followers: 320,
-  likes: 450,
-  referrals: 12,
-  joined: 'Member since Jan 2023',
-  verified: true,
-});
-
 export const Profile = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const history = useHistory();
 
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<User>({
     name: 'Alex Johnson',
     email: 'alex.johnson@example.com',
     membership: 'Premium',

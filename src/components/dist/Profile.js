@@ -25,19 +25,6 @@ var material_1 = require("@mui/material");
 var framer_motion_1 = require("framer-motion");
 var react_2 = require("react");
 var react_router_dom_1 = require("react-router-dom");
-var _a = react_2.useState({
-    name: 'Alex Johnson',
-    email: 'alex.johnson@example.com',
-    membership: 'Premium',
-    points: 1250,
-    coins: 0,
-    following: 150,
-    followers: 320,
-    likes: 450,
-    referrals: 12,
-    joined: 'Member since Jan 2023',
-    verified: true
-}), user = _a[0], setUser = _a[1];
 exports.Profile = function () {
     var theme = material_1.useTheme();
     var isSmall = material_1.useMediaQuery(theme.breakpoints.down('sm'));
