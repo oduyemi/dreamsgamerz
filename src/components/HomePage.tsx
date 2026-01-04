@@ -17,23 +17,37 @@ import {
 import { motion, useAnimation } from 'framer-motion';
 import { GiTwoCoins } from 'react-icons/gi';
 
-
+const updates = [
+  '🎮 New Game Available',
+  '🔥 Tournament Live',
+  '🛒 New Product in Store',
+];
 
 export const HomePage = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(true);
+  const [updateIndex, setUpdateIndex] = useState(0);
+
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const controls = useAnimation();
 
   // Sample values (could come from API later)
   const gameDollars = 100;
-  const coinBalance = 2500; // coins
-  const coinsToUsdRate = 100; // 100 coins = 1 USD
+  const coinBalance = 2500;
+  const coinsToUsdRate = 100;
 
   const totalUsd = useMemo(() => {
     return gameDollars + coinBalance / coinsToUsdRate;
   }, [gameDollars, coinBalance]);
+
+  // Rotate updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setUpdateIndex((prev) => (prev + 1) % updates.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Subtle glow pulse animation
   const pulseGlow = keyframes`
@@ -59,7 +73,7 @@ export const HomePage = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      controls.start((i) => 'visible');
+      controls.start('visible');
     }, 300);
     return () => clearTimeout(timer);
   }, [controls]);
@@ -71,60 +85,107 @@ export const HomePage = () => {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        overflow: 'hidden',
         position: 'relative',
         width: '100%',
-        transform: isSmall ? 'scale(0.95)' : 'scale(1)' ,
+        transform: isSmall ? 'scale(0.95)' : 'scale(1)',
         transformOrigin: 'center',
       }}
     >
-      {/* Notification Bell */}
-      <IconButton
-        aria-label="Notifications"
+      {/* Top Header Row */}
+      <Box
         sx={{
           position: 'absolute',
           top: 16,
-          right: 16,
-          color: '#5b7fff',
-          '&:hover': { backgroundColor: 'rgba(91,127,255,0.08)' },
+          width: '100%',
+          maxWidth: 600,
+          px: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          zIndex: 10,
         }}
-        onClick={() => setHasNotifications(false)}
       >
-        <Badge
-          color="error"
-          variant="dot"
-          invisible={!hasNotifications}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        {/* Updates Box */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <IonIcon icon={notifications} style={{ fontSize: '24px' }} />
-        </Badge>
-      </IconButton>
+          <Box
+            sx={{
+              px: 2,
+              py: 0.8,
+              borderRadius: 2,
+              border: '2px solid #f2c94c',
+              backgroundColor: '#fffdf5',
+              boxShadow: '0 2px 8px rgba(202,168,76,0.25)',
+              minWidth: 180,
+              maxWidth: 220,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 4px 14px rgba(202,168,76,0.4)',
+                transform: 'translateY(-1px)',
+              },
+            }}
+          >
+            <Stack spacing={0.3}>
+              <Typography
+                fontSize={11}
+                fontWeight={600}
+                color="#caa84c"
+                textTransform="uppercase"
+              >
+                Updates
+              </Typography>
+
+              <motion.div
+                key={updateIndex}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35 }}
+              >
+                <Typography fontSize={13} fontWeight={500} noWrap>
+                  {updates[updateIndex]}
+                </Typography>
+              </motion.div>
+            </Stack>
+          </Box>
+        </motion.div>
+
+        {/* Notification Bell */}
+        <IconButton
+          aria-label="Notifications"
+          sx={{
+            color: '#5b7fff',
+            '&:hover': { backgroundColor: 'rgba(91,127,255,0.08)' },
+          }}
+          onClick={() => setHasNotifications(false)}
+        >
+          <Badge color="error" variant="dot" invisible={!hasNotifications}>
+            <IonIcon icon={notifications} style={{ fontSize: 24 }} />
+          </Badge>
+        </IconButton>
+      </Box>
 
       {/* Balance Section */}
-      {controls && (
       <motion.div
         custom={0}
         variants={fadeLiftVariant}
         initial="hidden"
         animate={controls}
-        whileHover={{ scale: 1.02, y: -2 }}
-        transition={{ type: 'spring', stiffness: 90, damping: 14 }}
-        style={{ width: '100%', maxWidth: 600 }}
+        style={{ width: '100%', maxWidth: 600, marginTop: 96 }}
       >
         <Box
           sx={{
             background: 'linear-gradient(145deg, #ffffff, #fafafa)',
             borderRadius: 3,
-            p: { xs: 2, sm: 3 },
+            p: 3,
             mx: 2,
             mb: 1,
-            mt: -8,
             boxShadow: '0 3px 12px rgba(0,0,0,0.05)',
             border: '1px solid #f0f0f0',
-            transition: 'all 0.3s ease',
-            '&:hover': { boxShadow: '0 6px 18px rgba(202,168,76,0.25)' },
           }}
         >
           <Grid container spacing={2} justifyContent="space-around">
@@ -142,21 +203,13 @@ export const HomePage = () => {
                         </Typography>
                       ) : index === 1 ? (
                         <>
-                          <GiTwoCoins
-                            style={{
-                              fontSize: '18px',
-                              color: '#caa84c',
-                              marginRight: '2px',
-                            }}
-                          />
-                          <Typography fontWeight="bold" color="primary">
+                          <GiTwoCoins style={{ fontSize: 18, color: '#caa84c' }} />
+                          <Typography fontWeight="bold">
                             {coinBalance.toLocaleString()}
                           </Typography>
                         </>
                       ) : (
-                        <Typography fontWeight="bold" color="primary">
-                          150
-                        </Typography>
+                        <Typography fontWeight="bold">150</Typography>
                       )
                     ) : (
                       <Typography>••••</Typography>
@@ -164,7 +217,7 @@ export const HomePage = () => {
                     {index === 0 && (
                       <IonIcon
                         icon={showBalance ? eye : eyeOff}
-                        style={{ fontSize: '16px', color: '#888', cursor: 'pointer' }}
+                        style={{ fontSize: 16, cursor: 'pointer' }}
                         onClick={() => setShowBalance(!showBalance)}
                       />
                     )}
@@ -175,90 +228,49 @@ export const HomePage = () => {
           </Grid>
         </Box>
       </motion.div>
-      )}
 
       {/* Profile Section */}
-      {controls && (
       <motion.div
         custom={1}
         variants={fadeLiftVariant}
         initial="hidden"
         animate={controls}
-        whileHover={{ scale: 1.02, y: -2 }}
-        transition={{ type: 'spring', stiffness: 90, damping: 14 }}
         style={{ width: '100%', maxWidth: 600 }}
       >
         <Box
           sx={{
-            background: 'linear-gradient(145deg, #ffffff, #fafafa)',
+            background: '#fafafa',
             borderRadius: 3,
-            p: { xs: 2, sm: 3 },
+            p: 3,
             mx: 2,
             mb: 1,
-            mt: -2,
             border: '1px solid #eee',
-            boxShadow: '0 3px 10px rgba(0,0,0,0.04)',
-            '&:hover': { boxShadow: '0 6px 16px rgba(202,168,76,0.25)' },
           }}
         >
-          <Stack direction="row" alignItems="center" spacing={2}>
+          <Stack direction="row" spacing={2} alignItems="center">
             <Avatar
               src="/images/avatar.png"
-              alt="User Avatar"
               sx={{
                 width: 64,
                 height: 64,
                 border: '2px solid #caa84c',
-                boxShadow: '0 0 12px rgba(230,184,0,0.4)',
               }}
             />
             <Stack flex={1}>
-              <Typography variant="h6" fontWeight="bold" color="#caa84c">
+              <Typography fontWeight="bold" color="#caa84c">
                 Dreamer
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Level 1 Adventurer
-              </Typography>
-              <Box sx={{ width: '100%', height: '6px', backgroundColor: '#eee', borderRadius: '3px', mt: 1 }}>
-                <Box
-                  sx={{
-                    width: '30%',
-                    height: '100%',
-                    backgroundColor: '#caa84c',
-                    borderRadius: '3px',
-                    boxShadow: '0 0 5px rgba(230,184,0,0.7)',
-                  }}
-                />
+              <Typography variant="body2">Level 1 Adventurer</Typography>
+              <Box sx={{ mt: 1, height: 6, backgroundColor: '#eee' }}>
+                <Box sx={{ width: '30%', height: '100%', backgroundColor: '#caa84c' }} />
               </Box>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                120/400 XP to next level
-              </Typography>
+              <Typography variant="caption">120/400 XP to next level</Typography>
             </Stack>
           </Stack>
         </Box>
       </motion.div>
-      )}
 
-      {/* Token + Breakdown Section */}
-      {controls && (
-      <motion.div
-        custom={2}
-        variants={fadeLiftVariant}
-        initial="hidden"
-        animate={controls}
-        transition={{ type: 'spring', stiffness: 90, damping: 14 }}
-      >
-        <Box
-          sx={{
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mt: 0,
-          }}
-        >
-          <Box
+      <Box
             sx={{
               position: 'absolute',
               width: { xs: '180px', sm: '220px' },
@@ -280,52 +292,20 @@ export const HomePage = () => {
             }}
           />
 
-          {/* Breakdown Box */}
-          {controls && (
-          <motion.div
-            custom={3}
-            variants={fadeLiftVariant}
-            initial="hidden"
-            animate={controls}
-            transition={{ type: 'spring', stiffness: 80, damping: 12 }}
-          >
-            <Box
-              sx={{
-                backgroundColor: '#fafafa',
-                borderRadius: 3,
-                mt: 2,
-                p: 2,
-                mx: 2,
-                mb: 3.5,
-                textAlign: 'center',
-                border: '1px solid #eee',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-              }}
-            >
-              <Typography variant="subtitle2" color="#caa84c" fontWeight={600}>
-                Token Breakdown
-              </Typography>
-              <Divider sx={{ my: 1.5 }} />
-              <Typography variant="body2" color="text.secondary">
-                Game Dollars: <b>${gameDollars.toFixed(2)}</b>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Coin Balance: <b>{coinBalance.toLocaleString()} coins</b> ≈ $
-                {(coinBalance / coinsToUsdRate).toFixed(2)} USD
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="body1" fontWeight="bold" color="#caa84c">
-                Total: ${totalUsd.toFixed(2)} USD
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                (100 coins = 1 USD)
-              </Typography>
-            </Box>
-          </motion.div>
-          )}
+      {/* Token Breakdown */}
+      <motion.div
+        custom={2}
+        variants={fadeLiftVariant}
+        initial="hidden"
+        animate={controls}
+      >
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography fontWeight="bold" color="#caa84c">
+            Total: ${totalUsd.toFixed(2)} USD
+          </Typography>
+          <Typography variant="caption">(100 coins = 1 USD)</Typography>
         </Box>
       </motion.div>
-      )}
     </Box>
   );
 };

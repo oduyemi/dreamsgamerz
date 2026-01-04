@@ -5,7 +5,8 @@ var react_router_1 = require("@ionic/react-router");
 var react_router_dom_1 = require("react-router-dom");
 var Home_1 = require("./pages/Home");
 var Competition_1 = require("./pages/Competition");
-var MovingPicture_1 = require("./pages/MovingPicture");
+// import MovingPicture from "./pages/MovingPicture";
+var Intro_1 = require("./components/movinggame/Intro");
 var MovingPictureGamePlay_1 = require("./components/MovingPictureGamePlay");
 var TournamentLobby_1 = require("./components/TournamentLobby");
 var Video_1 = require("./components/Video");
@@ -28,7 +29,7 @@ var App = function () {
             React.createElement(react_1.IonRouterOutlet, null,
                 React.createElement(react_router_dom_1.Route, { exact: true, path: "/", component: Home_1["default"] }),
                 React.createElement(react_router_dom_1.Route, { exact: true, path: "/games", component: Competition_1["default"] }),
-                React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture", component: MovingPicture_1["default"] }),
+                React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture", component: Intro_1.MovingPhotoGame }),
                 React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture/lobby", component: TournamentLobby_1.TournamentLobby }),
                 React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture/play", component: MovingPictureGamePlay_1["default"] }),
                 React.createElement(react_router_dom_1.Route, { exact: true, path: "/videos", component: Video_1.VideoPage }),

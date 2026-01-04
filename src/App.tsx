@@ -4,8 +4,9 @@ import { Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Competition from "./pages/Competition";
-import MovingPicture from "./pages/MovingPicture";
-
+// import MovingPicture from "./pages/MovingPicture";
+import { MovingPhotoGame } from "./components/movinggame/Intro";
+import { MovingGame } from "./components/movinggame/Game";
 import MovingPicturePlayGame from "./components/MovingPictureGamePlay";
 import { TournamentLobby } from "./components/TournamentLobby";
 
@@ -39,8 +40,9 @@ const App: React.FC = () => {
 
           {/* GAMES */}
           <Route exact path="/games" component={Competition} />
-          <Route exact path="/games/moving-picture" component={MovingPicture} />
-
+          {/* <Route exact path="/games/moving-picture" component={MovingPicture} /> */}
+          <Route exact path="/games/moving-picture" component={MovingPhotoGame} />
+          <Route exact path="/games/moving-game/start"  component={MovingGame} />
           {/* MOVING PICTURE GAME FLOW */}
           <Route
             exact
