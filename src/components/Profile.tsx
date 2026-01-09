@@ -106,7 +106,7 @@ export const Profile = () => {
       {/* Custom Header */}
       <Box
         sx={{
-          backgroundColor: '#111',
+          // backgroundColor: '#111',
           padding: '16px 0',
           textAlign: 'center',
           borderBottom: '1px solid rgba(202,168,76,0.2)',
@@ -121,7 +121,7 @@ export const Profile = () => {
             fontSize: isSmall ? '1.2rem' : '1.5rem'
           }}
         >
-          Creator Dashboard
+          Profile
         </Typography>
       </Box>
 

@@ -69,7 +69,7 @@ exports.Profile = function () {
     var coinsFromPoints = Math.floor(totalPoints / 1500) * 100;
     return (React.createElement(material_1.Box, { sx: { backgroundColor: '#ffffff', paddingBottom: '100px' } },
         React.createElement(material_1.Box, { sx: {
-                backgroundColor: '#111',
+                // backgroundColor: '#111',
                 padding: '16px 0',
                 textAlign: 'center',
                 borderBottom: '1px solid rgba(202,168,76,0.2)',
@@ -80,7 +80,7 @@ exports.Profile = function () {
                     color: '#caa84c',
                     fontWeight: 700,
                     fontSize: isSmall ? '1.2rem' : '1.5rem'
-                } }, "Creator Dashboard")),
+                } }, "Profile")),
         React.createElement(material_1.Box, { px: 2, pt: 2, pb: 6, maxWidth: 500, mx: "auto" },
             React.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } },
                 React.createElement(material_1.Paper, { sx: {

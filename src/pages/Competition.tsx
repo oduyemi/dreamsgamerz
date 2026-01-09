@@ -10,7 +10,7 @@ const Competition = () => {
     <AppLayout>
 
       <div className="header">
-        <h1 style={{ fontSize: isSmall ? '1.2rem' : '1.5rem' }}>Games</h1>
+        <h1 style={{ fontSize: isSmall ? '1.2rem' : '1.5rem' }}></h1>
       </div>
 
       <div className="page-content">

@@ -44,7 +44,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           left: 0,
           width: '100%',
           borderRadius: '16px 16px 0 0',
-          backgroundColor: '#111',
+          backgroundColor: 'white',
           backdropFilter: 'blur(10px)',
           borderTop: '1px solid rgba(255,255,255,0.1)',
           zIndex: 2000,
@@ -68,7 +68,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 spacing={0.4}
                 sx={{
                   cursor: 'pointer',
-                  color: isActive ? '#caa84c' : 'rgba(255,255,255,0.75)',
+                  color: isActive ? '#111' : '#caa84c',
                   transition: 'all 0.25s ease',
                   '&:hover': {
                     color: '#caa84c',

@@ -49,7 +49,7 @@ export const VideoPage = () => {
   return (
     <IonPage>
       {/* Header */}
-      <IonHeader>
+      {/* <IonHeader>
         <IonToolbar
           style={{
             backgroundColor: "#fff",
@@ -65,10 +65,9 @@ export const VideoPage = () => {
               fontSize: isSmall ? "1.2rem" : "1.5rem",
             }}
           >
-            Videos
           </IonTitle>
         </IonToolbar>
-      </IonHeader>
+      </IonHeader> */}
 
       {/* Content */}
       <IonContent fullscreen style={{ backgroundColor: "#fff" }}>
@@ -99,7 +98,7 @@ export const VideoPage = () => {
               <Stack key={i} alignItems="center" spacing={0.5}>
                 <IconButton
                   style={{
-                    color: isActive ? "#caa84c" : "rgba(0,0,0,0.6)",
+                    color: isActive ? "#111" : "#caa84c",
                     padding: 12,
                     transition: "all 0.25s ease",
                   }}
@@ -108,7 +107,7 @@ export const VideoPage = () => {
                     (e.currentTarget.style.color = isActive ? "#caa84c" : "#e65d0f")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = isActive ? "#caa84c" : "rgba(0,0,0,0.6)")
+                    (e.currentTarget.style.color = isActive ? "#111" : "#caa84c")
                   }
                 >
                   <IonIcon icon={item.icon} style={{ fontSize: 22 }} />
@@ -116,7 +115,7 @@ export const VideoPage = () => {
                 <Typography
                   style={{
                     fontSize: 10.5,
-                    color: isActive ? "#caa84c" : "rgba(0,0,0,0.6)",
+                    color: isActive ? "#111" : "#caa84c",
                     fontWeight: isActive ? 600 : 400,
                     letterSpacing: 0.4,
                     textTransform: "uppercase",

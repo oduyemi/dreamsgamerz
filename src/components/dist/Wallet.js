@@ -97,7 +97,7 @@ exports.Wallet = function () {
             pb: "env(safe-area-inset-bottom)"
         } },
         react_1["default"].createElement(material_1.AppBar, { position: "sticky", elevation: 0, sx: {
-                background: "rgba(15,15,15,0.85)",
+                background: "white",
                 backdropFilter: "blur(14px)",
                 borderBottom: "1px solid rgba(202,168,76,0.15)"
             } },
