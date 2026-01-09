@@ -167,12 +167,38 @@ exports.HomePage = function () {
                 animation: pulseGlow + " 4s ease-in-out infinite",
                 filter: 'drop-shadow(0 0 8px rgba(202,168,76,0.5))'
             } }),
-        React.createElement(framer_motion_1.motion.div, { custom: 2, variants: fadeLiftVariant, initial: "hidden", animate: controls },
-            React.createElement(material_1.Box, { sx: { textAlign: 'center', mt: 2 } },
-                React.createElement(material_1.Typography, { fontWeight: "bold", color: "#caa84c" },
+        controls && (React.createElement(framer_motion_1.motion.div, { custom: 3, variants: fadeLiftVariant, initial: "hidden", animate: controls, transition: { type: 'spring', stiffness: 80, damping: 12 } },
+            React.createElement(material_1.Box, { sx: {
+                    backgroundColor: '#fafafa',
+                    borderRadius: 3,
+                    mt: 2,
+                    p: 2,
+                    mx: 2,
+                    mb: 3.5,
+                    textAlign: 'center',
+                    border: '1px solid #eee',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+                } },
+                React.createElement(material_1.Typography, { variant: "subtitle2", color: "#caa84c", fontWeight: 600 }, "Token Breakdown"),
+                React.createElement(material_1.Divider, { sx: { my: 1.5 } }),
+                React.createElement(material_1.Typography, { variant: "body2", color: "text.secondary" },
+                    "USDT Owned: ",
+                    React.createElement("b", null,
+                        "$",
+                        gameDollars.toFixed(2))),
+                React.createElement(material_1.Typography, { variant: "body2", color: "text.secondary" },
+                    "Coin Balance: ",
+                    React.createElement("b", null,
+                        coinBalance.toLocaleString(),
+                        " coins"),
+                    " \u2248 $",
+                    (coinBalance / coinsToUsdRate).toFixed(2),
+                    " USD"),
+                React.createElement(material_1.Divider, { sx: { my: 1 } }),
+                React.createElement(material_1.Typography, { variant: "body1", fontWeight: "bold", color: "#caa84c" },
                     "Total: $",
                     totalUsd.toFixed(2),
                     " USD"),
-                React.createElement(material_1.Typography, { variant: "caption" }, "(100 coins = 1 USD)")))));
+                React.createElement(material_1.Typography, { variant: "caption", color: "text.secondary" }, "(100 coins = 1 USD)"))))));
 };
 var templateObject_1;
