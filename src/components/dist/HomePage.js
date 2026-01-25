@@ -51,6 +51,7 @@ exports.HomePage = void 0;
 var react_1 = require("@ionic/react");
 var icons_1 = require("ionicons/icons");
 var react_2 = require("react");
+var useUser_1 = require("../hooks/useUser");
 var material_1 = require("@mui/material");
 var Close_1 = require("@mui/icons-material/Close");
 var Send_1 = require("@mui/icons-material/Send");
@@ -58,12 +59,14 @@ var framer_motion_1 = require("framer-motion");
 var gi_1 = require("react-icons/gi");
 var ChatBubbleOutline_1 = require("@mui/icons-material/ChatBubbleOutline");
 var supportChat_api_1 = require("../lib/supportChat.api");
+var pusher_js_1 = require("pusher-js");
 var updates = [
     '🎮 New Game Available',
     '🔥 Tournament Live',
     '🛒 New Product in Store',
 ];
 exports.HomePage = function () {
+    var user = useUser_1.useUser().user;
     var _a = react_2.useState(true), showBalance = _a[0], setShowBalance = _a[1];
     var _b = react_2.useState(true), hasNotifications = _b[0], setHasNotifications = _b[1];
     var _c = react_2.useState(0), updateIndex = _c[0], setUpdateIndex = _c[1];
@@ -73,6 +76,7 @@ exports.HomePage = function () {
     var _d = react_2.useState(false), chatOpen = _d[0], setChatOpen = _d[1];
     var _e = react_2.useState(''), message = _e[0], setMessage = _e[1];
     var messagesEndRef = react_2.useRef(null);
+    var userId = user === null || user === void 0 ? void 0 : user.userId;
     var _f = react_2.useState([{ from: 'system', text: '👋 Hi! How can we help you today?' }]), messages = _f[0], setMessages = _f[1];
     // =============================
     // Load messages when chat opens
@@ -107,39 +111,30 @@ exports.HomePage = function () {
         }); };
         loadChats();
     }, [chatOpen]);
-    // =============================
-    // Poll for admin replies
-    // =============================
+    // Real-time admin replies (Pusher)
     react_2.useEffect(function () {
-        if (!chatOpen)
+        if (!chatOpen || !userId)
             return;
-        var interval = setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
-            var data, mapped, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, supportChat_api_1.fetchSupportMessages()];
-                    case 1:
-                        data = _b.sent();
-                        mapped = data.map(function (c) { return ({
-                            from: c.sender === 'USER' ? 'user' : 'admin',
-                            text: c.message
-                        }); });
-                        setMessages(__spreadArrays([
-                            { from: 'system', text: '👋 Hi! How can we help you today?' }
-                        ], mapped));
-                        return [3 /*break*/, 3];
-                    case 2:
-                        _a = _b.sent();
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        }); }, 5000);
-        return function () { return clearInterval(interval); };
-    }, [chatOpen]);
-    // =============================
+        var pusher = new pusher_js_1["default"](process.env.NEXT_PUBLIC_PUSHER_KEY, {
+            cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER
+        });
+        var channelName = "support-user-" + userId;
+        var channel = pusher.subscribe(channelName);
+        channel.bind("message", function (data) {
+            setMessages(function (prev) { return __spreadArrays(prev, [
+                {
+                    from: data.sender === "ADMIN" ? "admin" : "user",
+                    text: data.message
+                },
+            ]); });
+        });
+        return function () {
+            channel.unbind_all();
+            channel.unsubscribe();
+            pusher.disconnect();
+        };
+    }, [chatOpen, userId]);
+    //  =============================
     // Auto-scroll chat
     // =============================
     react_2.useEffect(function () {

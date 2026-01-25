@@ -1,6 +1,8 @@
 import { IonIcon } from '@ionic/react';
 import { notifications, eye, eyeOff } from 'ionicons/icons';
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { useUser } from '../hooks/useUser';
+
 import {
   Box,
   Stack,
@@ -25,6 +27,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { GiTwoCoins } from 'react-icons/gi';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { fetchSupportMessages, sendSupportMessage } from '../lib/supportChat.api';
+import Pusher from "pusher-js";
 
 
 const updates = [
@@ -34,6 +37,7 @@ const updates = [
 ];
 
 export const HomePage = () => {
+  const { user } = useUser();
   const [showBalance, setShowBalance] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(true);
   const [updateIndex, setUpdateIndex] = useState(0);
@@ -43,6 +47,8 @@ export const HomePage = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const userId = user?.userId;
 
   const [messages, setMessages] = useState<
     { from: 'user' | 'admin' | 'system'; text: string }[]
@@ -74,31 +80,36 @@ export const HomePage = () => {
     loadChats();
   }, [chatOpen]);
 
-  // =============================
-  // Poll for admin replies
-  // =============================
+// Real-time admin replies (Pusher)
   useEffect(() => {
-    if (!chatOpen) return;
+    if (!chatOpen || !userId) return;
 
-    const interval = setInterval(async () => {
-      try {
-        const data = await fetchSupportMessages();
-        const mapped = data.map((c: any) => ({
-          from: c.sender === 'USER' ? 'user' : 'admin',
-          text: c.message,
-        }));
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
 
-        setMessages([
-          { from: 'system', text: '👋 Hi! How can we help you today?' },
-          ...mapped,
-        ]);
-      } catch {}
-    }, 5000);
+    const channelName = `support-user-${userId}`;
+    const channel = pusher.subscribe(channelName);
 
-    return () => clearInterval(interval);
-  }, [chatOpen]);
+    channel.bind("message", (data: { sender: "USER" | "ADMIN"; message: string }) => {
+      setMessages(prev => [
+        ...prev,
+        {
+          from: data.sender === "ADMIN" ? "admin" : "user",
+          text: data.message,
+        },
+      ]);
+    });
 
-  // =============================
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+      pusher.disconnect();
+    };
+  }, [chatOpen, userId]);
+
+
+//  =============================
   // Auto-scroll chat
   // =============================
   useEffect(() => {
@@ -535,3 +546,5 @@ export const HomePage = () => {
       </Box>
     );
   };
+
+
