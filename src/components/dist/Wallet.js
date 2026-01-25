@@ -229,9 +229,9 @@ exports.Wallet = function () {
                     color: "#fff"
                 }
             } },
-            react_1["default"].createElement(material_1.DialogTitle, null, d.title),
+            react_1["default"].createElement(material_1.DialogTitle, { color: "white" }, d.title),
             react_1["default"].createElement(material_1.DialogContent, null,
-                react_1["default"].createElement(material_1.TextField, { fullWidth: true, type: "number", label: "Amount", value: d.amount || "", onChange: function (e) { return d.setAmount(+e.target.value); } })),
+                react_1["default"].createElement(material_1.TextField, { fullWidth: true, color: "warning", type: "number", label: "Amount", value: d.amount || "", onChange: function (e) { return d.setAmount(+e.target.value); } })),
             react_1["default"].createElement(material_1.DialogActions, null,
                 react_1["default"].createElement(material_1.Button, { onClick: d.close }, "Cancel"),
                 react_1["default"].createElement(material_1.Button, { variant: "contained", sx: { backgroundColor: "#caa84c", fontWeight: 700 }, onClick: d.action }, d.actionText)))); }),
@@ -243,7 +243,7 @@ exports.Wallet = function () {
                     color: "#fff"
                 }
             } },
-            react_1["default"].createElement(material_1.DialogTitle, { fontWeight: 800 }, "Convert Assets"),
+            react_1["default"].createElement(material_1.DialogTitle, { fontWeight: 800, color: "white" }, "Convert Assets"),
             react_1["default"].createElement(material_1.DialogContent, null,
                 react_1["default"].createElement(material_1.Stack, { direction: "row", spacing: 1, mb: 2 },
                     react_1["default"].createElement(material_1.Button, { fullWidth: true, variant: convertDirection === "coin-to-usdt" ? "contained" : "outlined", onClick: function () { return setConvertDirection("coin-to-usdt"); }, sx: {
@@ -258,7 +258,7 @@ exports.Wallet = function () {
                             color: convertDirection === "usdt-to-coin" ? "#111" : "#f7dc8a",
                             borderColor: "rgba(202,168,76,0.6)"
                         } }, "USDT \u2192 Coin")),
-                react_1["default"].createElement(material_1.TextField, { fullWidth: true, type: "number", label: convertDirection === "coin-to-usdt" ? "Coins" : "USDT", value: convertAmount || "", onChange: function (e) { return setConvertAmount(+e.target.value); }, helperText: convertDirection === "coin-to-usdt"
+                react_1["default"].createElement(material_1.TextField, { fullWidth: true, color: "warning", type: "number", label: convertDirection === "coin-to-usdt" ? "Coins" : "USDT", value: convertAmount || "", onChange: function (e) { return setConvertAmount(+e.target.value); }, helperText: convertDirection === "coin-to-usdt"
                         ? "You\u2019ll receive " + convertedValue + " USDT (100 coins = 1 USDT)"
                         : "You\u2019ll receive " + convertedValue + " Coins (1 USDT = 100 coins)" })),
             react_1["default"].createElement(material_1.DialogActions, null,
@@ -272,10 +272,10 @@ exports.Wallet = function () {
                     color: "#fff"
                 }
             } },
-            react_1["default"].createElement(material_1.DialogTitle, null, "Transfer USDT"),
+            react_1["default"].createElement(material_1.DialogTitle, { color: "white" }, "Transfer USDT"),
             react_1["default"].createElement(material_1.DialogContent, null,
-                react_1["default"].createElement(material_1.TextField, { fullWidth: true, label: "Recipient", value: transferTo, onChange: function (e) { return setTransferTo(e.target.value); }, sx: { mb: 2 } }),
-                react_1["default"].createElement(material_1.TextField, { fullWidth: true, type: "number", label: "Amount", value: transferAmount || "", onChange: function (e) { return setTransferAmount(+e.target.value); } })),
+                react_1["default"].createElement(material_1.TextField, { color: "warning", fullWidth: true, label: "Recipient", value: transferTo, onChange: function (e) { return setTransferTo(e.target.value); }, sx: { mb: 2 } }),
+                react_1["default"].createElement(material_1.TextField, { color: "warning", fullWidth: true, type: "number", label: "Amount", value: transferAmount || "", onChange: function (e) { return setTransferAmount(+e.target.value); } })),
             react_1["default"].createElement(material_1.DialogActions, null,
                 react_1["default"].createElement(material_1.Button, { onClick: function () { return setTransferOpen(false); } }, "Cancel"),
                 react_1["default"].createElement(material_1.Button, { variant: "contained", sx: { backgroundColor: "#caa84c", fontWeight: 700 }, onClick: handleTransfer }, "Transfer")))));

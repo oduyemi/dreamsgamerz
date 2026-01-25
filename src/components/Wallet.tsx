@@ -416,10 +416,11 @@ export const Wallet: React.FC = () => {
             },
           }}
         >
-          <DialogTitle>{d.title}</DialogTitle>
+          <DialogTitle color="white">{d.title}</DialogTitle>
           <DialogContent>
             <TextField
               fullWidth
+              color="warning"
               type="number"
               label="Amount"
               value={d.amount || ""}
@@ -454,7 +455,7 @@ export const Wallet: React.FC = () => {
           },
         }}
       >
-        <DialogTitle fontWeight={800}>Convert Assets</DialogTitle>
+        <DialogTitle fontWeight={800} color="white">Convert Assets</DialogTitle>
         <DialogContent>
           <Stack direction="row" spacing={1} mb={2}>
             <Button
@@ -492,6 +493,7 @@ export const Wallet: React.FC = () => {
 
           <TextField
             fullWidth
+            color="warning"
             type="number"
             label={convertDirection === "coin-to-usdt" ? "Coins" : "USDT"}
             value={convertAmount || ""}
@@ -530,9 +532,10 @@ export const Wallet: React.FC = () => {
           },
         }}
       >
-        <DialogTitle>Transfer USDT</DialogTitle>
+        <DialogTitle color="white">Transfer USDT</DialogTitle>
         <DialogContent>
           <TextField
+            color="warning"
             fullWidth
             label="Recipient"
             value={transferTo}
@@ -540,6 +543,7 @@ export const Wallet: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <TextField
+            color="warning"
             fullWidth
             type="number"
             label="Amount"
