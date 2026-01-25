@@ -50,14 +50,22 @@ exports.LoginForm = function () {
     var _b = react_2.useState(""), password = _b[0], setPassword = _b[1];
     var _c = react_2.useState(false), loading = _c[0], setLoading = _c[1];
     var onSubmit = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var success;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    if (!email || !password)
+                        return [2 /*return*/];
                     setLoading(true);
                     return [4 /*yield*/, handleLogin(email, password)];
                 case 1:
-                    _a.sent();
+                    success = _a.sent();
                     setLoading(false);
+                    if (success) {
+                        setTimeout(function () {
+                            window.location.href = "/"; // or /dashboard
+                        }, 1200);
+                    }
                     return [2 /*return*/];
             }
         });
@@ -74,7 +82,7 @@ exports.LoginForm = function () {
                 react_2["default"].createElement(react_1.IonLabel, { position: "stacked" }, "Password"),
                 react_2["default"].createElement(react_1.IonInput, { type: "password", value: password, onIonChange: function (e) { return setPassword(e.detail.value); }, required: true })),
             flashMessage && (react_2["default"].createElement(react_1.IonText, { color: flashMessage.type === "error" ? "danger" : "success" },
-                react_2["default"].createElement("p", null, flashMessage.message))),
-            react_2["default"].createElement(react_1.IonButton, { expand: "block", onClick: onSubmit, className: "ion-margin-top" }, "Login"),
+                react_2["default"].createElement("p", { className: "ion-margin-top" }, flashMessage.message))),
+            react_2["default"].createElement(react_1.IonButton, { expand: "block", onClick: onSubmit, className: "ion-margin-top", disabled: loading }, "Login"),
             react_2["default"].createElement(react_1.IonLoading, { isOpen: loading, message: "Logging in..." }))));
 };

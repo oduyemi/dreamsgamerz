@@ -28,9 +28,17 @@ import {
     const [loading, setLoading] = useState(false);
   
     const onSubmit = async () => {
+      if (!email || !password) return;
+  
       setLoading(true);
-      await handleLogin(email, password);
+      const success = await handleLogin(email, password);
       setLoading(false);
+  
+      if (success) {
+        setTimeout(() => {
+          window.location.href = "/"; // or /dashboard
+        }, 1200);
+      }
     };
   
     return (
@@ -63,12 +71,19 @@ import {
           </IonItem>
   
           {flashMessage && (
-            <IonText color={flashMessage.type === "error" ? "danger" : "success"}>
-              <p>{flashMessage.message}</p>
+            <IonText
+              color={flashMessage.type === "error" ? "danger" : "success"}
+            >
+              <p className="ion-margin-top">{flashMessage.message}</p>
             </IonText>
           )}
   
-          <IonButton expand="block" onClick={onSubmit} className="ion-margin-top">
+          <IonButton
+            expand="block"
+            onClick={onSubmit}
+            className="ion-margin-top"
+            disabled={loading}
+          >
             Login
           </IonButton>
   
@@ -77,5 +92,4 @@ import {
       </IonPage>
     );
   };
-  
   
