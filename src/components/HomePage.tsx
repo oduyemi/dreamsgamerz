@@ -13,9 +13,18 @@ import {
   useTheme,
   useMediaQuery,
   Divider,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import SendIcon from '@mui/icons-material/Send';
 import { motion, useAnimation } from 'framer-motion';
 import { GiTwoCoins } from 'react-icons/gi';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+
 
 const updates = [
   '🎮 New Game Available',
@@ -27,10 +36,14 @@ export const HomePage = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(true);
   const [updateIndex, setUpdateIndex] = useState(0);
-
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const controls = useAnimation();
+  const [chatOpen, setChatOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([
+    { from: 'system', text: '👋 Hi! How can we help you today?' },
+  ]);
 
   // Sample values (could come from API later)
   const gameDollars = 100;
@@ -153,6 +166,51 @@ export const HomePage = () => {
             </Stack>
           </Box>
         </motion.div>
+
+        {/* Floating Chat Box */}
+        <Box
+          sx={{
+            position: 'absolute',
+            right: 70,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1.5,
+            py: 0.6,
+            borderRadius: 20,
+            backgroundColor: '#ffffff',
+            border: '1px solid #eaeaea',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+            cursor: 'pointer',
+            zIndex: 20,
+            transition: 'all 0.25s ease',
+            '&:hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 14px rgba(0,0,0,0.12)',
+            },
+          }}
+          onClick={() => setChatOpen(true)}
+        >
+          <Typography
+            fontSize={13}
+            fontWeight={500}
+            color="text.secondary"
+          >
+            Chat
+          </Typography>
+
+          <Avatar
+            sx={{
+              width: 28,
+              height: 28,
+              backgroundColor: '#f2f4ff',
+            }}
+          >
+            <ChatBubbleOutlineIcon
+              sx={{ fontSize: 16, color: '#5b7fff' }}
+            />
+          </Avatar>
+        </Box>
 
         {/* Notification Bell */}
         <IconButton
@@ -336,6 +394,108 @@ export const HomePage = () => {
             </Box>
             </motion.div>
           )}
+
+          <Dialog
+            open={chatOpen}
+            onClose={() => setChatOpen(false)}
+            fullWidth
+            maxWidth="xs"
+            PaperProps={{
+              sx: {
+                borderRadius: 3,
+                height: '70vh',
+                display: 'flex',
+                flexDirection: 'column',
+              },
+            }}
+          >
+            {/* Header */}
+            <DialogTitle
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontWeight: 600,
+              }}
+            >
+              Live Chat
+              <IconButton onClick={() => setChatOpen(false)}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+
+            {/* Messages */}
+            <DialogContent
+              sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+                overflowY: 'auto',
+                backgroundColor: '#fafafa',
+              }}
+            >
+              {messages.map((msg, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    alignSelf: msg.from === 'user' ? 'flex-end' : 'flex-start',
+                    backgroundColor:
+                      msg.from === 'user' ? '#5b7fff' : '#ffffff',
+                    color: msg.from === 'user' ? '#fff' : '#000',
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    maxWidth: '80%',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                  }}
+                >
+                  <Typography fontSize={13}>{msg.text}</Typography>
+                </Box>
+              ))}
+            </DialogContent>
+
+            {/* Input */}
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 1,
+                p: 1.5,
+                borderTop: '1px solid #eee',
+              }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Type a message…"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && message.trim()) {
+                    setMessages((prev) => [
+                      ...prev,
+                      { from: 'user', text: message },
+                    ]);
+                    setMessage('');
+                  }
+                }}
+              />
+              <Button
+                variant="contained"
+                sx={{ minWidth: 44, backgroundColor: "#f2c94c" }}
+                onClick={() => {
+                  if (!message.trim()) return;
+                  setMessages((prev) => [
+                    ...prev,
+                    { from: 'user', text: message },
+                  ]);
+                  setMessage('');
+                }}
+              >
+                <SendIcon fontSize="small" />
+              </Button>
+            </Box>
+          </Dialog>
       </Box>
     );
   };

@@ -3,14 +3,24 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 exports.__esModule = true;
 exports.HomePage = void 0;
 var react_1 = require("@ionic/react");
 var icons_1 = require("ionicons/icons");
 var react_2 = require("react");
 var material_1 = require("@mui/material");
+var Close_1 = require("@mui/icons-material/Close");
+var Send_1 = require("@mui/icons-material/Send");
 var framer_motion_1 = require("framer-motion");
 var gi_1 = require("react-icons/gi");
+var ChatBubbleOutline_1 = require("@mui/icons-material/ChatBubbleOutline");
 var updates = [
     '🎮 New Game Available',
     '🔥 Tournament Live',
@@ -23,6 +33,11 @@ exports.HomePage = function () {
     var theme = material_1.useTheme();
     var isSmall = material_1.useMediaQuery(theme.breakpoints.down('sm'));
     var controls = framer_motion_1.useAnimation();
+    var _d = react_2.useState(false), chatOpen = _d[0], setChatOpen = _d[1];
+    var _e = react_2.useState(''), message = _e[0], setMessage = _e[1];
+    var _f = react_2.useState([
+        { from: 'system', text: '👋 Hi! How can we help you today?' },
+    ]), messages = _f[0], setMessages = _f[1];
     // Sample values (could come from API later)
     var gameDollars = 100;
     var coinBalance = 2500;
@@ -105,6 +120,33 @@ exports.HomePage = function () {
                         React.createElement(material_1.Typography, { fontSize: 11, fontWeight: 600, color: "#caa84c", textTransform: "uppercase" }, "Updates"),
                         React.createElement(framer_motion_1.motion.div, { key: updateIndex, initial: { opacity: 0, y: 6 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35 } },
                             React.createElement(material_1.Typography, { fontSize: 13, fontWeight: 500, noWrap: true }, updates[updateIndex]))))),
+            React.createElement(material_1.Box, { sx: {
+                    position: 'absolute',
+                    right: 70,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 1.5,
+                    py: 0.6,
+                    borderRadius: 20,
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #eaeaea',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+                    cursor: 'pointer',
+                    zIndex: 20,
+                    transition: 'all 0.25s ease',
+                    '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 14px rgba(0,0,0,0.12)'
+                    }
+                }, onClick: function () { return setChatOpen(true); } },
+                React.createElement(material_1.Typography, { fontSize: 13, fontWeight: 500, color: "text.secondary" }, "Chat"),
+                React.createElement(material_1.Avatar, { sx: {
+                        width: 28,
+                        height: 28,
+                        backgroundColor: '#f2f4ff'
+                    } },
+                    React.createElement(ChatBubbleOutline_1["default"], { sx: { fontSize: 16, color: '#5b7fff' } }))),
             React.createElement(material_1.IconButton, { "aria-label": "Notifications", sx: {
                     color: '#5b7fff',
                     '&:hover': { backgroundColor: 'rgba(91,127,255,0.08)' }
@@ -199,6 +241,64 @@ exports.HomePage = function () {
                     "Total: $",
                     totalUsd.toFixed(2),
                     " USD"),
-                React.createElement(material_1.Typography, { variant: "caption", color: "text.secondary" }, "(100 coins = 1 USD)"))))));
+                React.createElement(material_1.Typography, { variant: "caption", color: "text.secondary" }, "(100 coins = 1 USD)")))),
+        React.createElement(material_1.Dialog, { open: chatOpen, onClose: function () { return setChatOpen(false); }, fullWidth: true, maxWidth: "xs", PaperProps: {
+                sx: {
+                    borderRadius: 3,
+                    height: '70vh',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }
+            } },
+            React.createElement(material_1.DialogTitle, { sx: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontWeight: 600
+                } },
+                "Live Chat",
+                React.createElement(material_1.IconButton, { onClick: function () { return setChatOpen(false); } },
+                    React.createElement(Close_1["default"], null))),
+            React.createElement(material_1.DialogContent, { sx: {
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    overflowY: 'auto',
+                    backgroundColor: '#fafafa'
+                } }, messages.map(function (msg, i) { return (React.createElement(material_1.Box, { key: i, sx: {
+                    alignSelf: msg.from === 'user' ? 'flex-end' : 'flex-start',
+                    backgroundColor: msg.from === 'user' ? '#5b7fff' : '#ffffff',
+                    color: msg.from === 'user' ? '#fff' : '#000',
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    maxWidth: '80%',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.08)'
+                } },
+                React.createElement(material_1.Typography, { fontSize: 13 }, msg.text))); })),
+            React.createElement(material_1.Box, { sx: {
+                    display: 'flex',
+                    gap: 1,
+                    p: 1.5,
+                    borderTop: '1px solid #eee'
+                } },
+                React.createElement(material_1.TextField, { fullWidth: true, size: "small", placeholder: "Type a message\u2026", value: message, onChange: function (e) { return setMessage(e.target.value); }, onKeyDown: function (e) {
+                        if (e.key === 'Enter' && message.trim()) {
+                            setMessages(function (prev) { return __spreadArrays(prev, [
+                                { from: 'user', text: message },
+                            ]); });
+                            setMessage('');
+                        }
+                    } }),
+                React.createElement(material_1.Button, { variant: "contained", sx: { minWidth: 44, backgroundColor: "#f2c94c" }, onClick: function () {
+                        if (!message.trim())
+                            return;
+                        setMessages(function (prev) { return __spreadArrays(prev, [
+                            { from: 'user', text: message },
+                        ]); });
+                        setMessage('');
+                    } },
+                    React.createElement(Send_1["default"], { fontSize: "small" }))))));
 };
 var templateObject_1;
