@@ -1,30 +1,39 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
+import { UserProvider } from "./userContext";
 
+/* PAGES */
 import Home from "./pages/Home";
 import Competition from "./pages/Competition";
-// import MovingPicture from "./pages/MovingPicture";
+import UserWallet from "./pages/Wallet";
+import UserProfile from "./pages/Profile";
+
+/* AUTH */
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+/* GAMES */
 import { MovingPhotoGame } from "./components/movinggame/Intro";
 import { MovingGame } from "./components/movinggame/Game";
 import MovingPicturePlayGame from "./components/MovingPictureGamePlay";
 import { TournamentLobby } from "./components/TournamentLobby";
 
+/* VIDEOS */
 import { VideoPage } from "./components/Video";
 import { Short } from "./components/ShortVideo";
 import { Funny } from "./components/FunnyVideo";
 import { Inspire } from "./components/InspiringVideo";
 import { AnimationVideo } from "./components/AnimationVideo";
 
-import UserWallet from "./pages/Wallet";
-import UserProfile from "./pages/Profile";
+/* ADMIN */
 import { AdminDashboard } from "./components/AdminDashboard";
 
+/* IONIC STYLES */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
 import "@ionic/react/css/structure.css";
 import "@ionic/react/css/typography.css";
-
 import "./theme/variables.css";
 
 setupIonicReact();
@@ -32,45 +41,44 @@ setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet>
+      <UserProvider>
+        <IonReactRouter>
+          <IonRouterOutlet>
 
-          {/* HOME */}
-          <Route exact path="/" component={Home} />
+            {/* AUTH */}
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
 
-          {/* GAMES */}
-          <Route exact path="/games" component={Competition} />
-          {/* <Route exact path="/games/moving-picture" component={MovingPicture} /> */}
-          <Route exact path="/games/moving-picture" component={MovingPhotoGame} />
-          <Route exact path="/games/moving-game/start"  component={MovingGame} />
-          {/* MOVING PICTURE GAME FLOW */}
-          <Route
-            exact
-            path="/games/moving-picture/lobby"
-            component={TournamentLobby}
-          />
-          <Route
-            exact
-            path="/games/moving-picture/play"
-            component={MovingPicturePlayGame}
-          />
+            {/* HOME */}
+            <Route exact path="/" component={Home} />
 
-          {/* VIDEOS */}
-          <Route exact path="/videos" component={VideoPage} />
-          <Route exact path="/videos/shorts" component={Short} />
-          <Route exact path="/videos/funny-videos" component={Funny} />
-          <Route exact path="/videos/inspiration" component={Inspire} />
-          <Route exact path="/videos/animations" component={AnimationVideo} />
+            {/* GAMES */}
+            <Route exact path="/games" component={Competition} />
+            <Route exact path="/games/moving-picture" component={MovingPhotoGame} />
+            <Route exact path="/games/moving-game/start" component={MovingGame} />
+            <Route exact path="/games/moving-picture/lobby" component={TournamentLobby} />
+            <Route exact path="/games/moving-picture/play" component={MovingPicturePlayGame} />
 
-          {/* USER */}
-          <Route exact path="/wallet" component={UserWallet} />
-          <Route exact path="/profile" component={UserProfile} />
+            {/* VIDEOS */}
+            <Route exact path="/videos" component={VideoPage} />
+            <Route exact path="/videos/shorts" component={Short} />
+            <Route exact path="/videos/funny-videos" component={Funny} />
+            <Route exact path="/videos/inspiration" component={Inspire} />
+            <Route exact path="/videos/animations" component={AnimationVideo} />
 
-          {/* ADMIN */}
-          <Route exact path="/admin/dashboard" component={AdminDashboard} />
+            {/* USER */}
+            <Route exact path="/wallet" component={UserWallet} />
+            <Route exact path="/profile" component={UserProfile} />
 
-        </IonRouterOutlet>
-      </IonReactRouter>
+            {/* ADMIN */}
+            <Route exact path="/admin/dashboard" component={AdminDashboard} />
+
+            {/* FALLBACK */}
+            <Redirect to="/" />
+
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </UserProvider>
     </IonApp>
   );
 };
