@@ -14,7 +14,8 @@ var Login_1 = require("./pages/Login");
 var Register_1 = require("./pages/Register");
 /* GAMES */
 var Intro_1 = require("./components/movinggame/Intro");
-var Game_1 = require("./components/movinggame/Game");
+// import { MovingGame } from "./components/movinggame/Game";
+var MovingPictureGame_1 = require("./components/MovingPictureGame");
 var MovingPictureGamePlay_1 = require("./components/MovingPictureGamePlay");
 var TournamentLobby_1 = require("./components/TournamentLobby");
 /* VIDEOS */
@@ -42,7 +43,7 @@ var App = function () {
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/", component: Home_1["default"] }),
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/games", component: Competition_1["default"] }),
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture", component: Intro_1.MovingPhotoGame }),
-                    React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-game/start", component: Game_1.MovingGame }),
+                    React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-game/start", component: MovingPictureGame_1.GameArena }),
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture/lobby", component: TournamentLobby_1.TournamentLobby }),
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/games/moving-picture/play", component: MovingPictureGamePlay_1["default"] }),
                     React.createElement(react_router_dom_1.Route, { exact: true, path: "/videos", component: Video_1.VideoPage }),

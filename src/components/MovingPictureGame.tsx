@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface GameArenaProps {
   lives: number;

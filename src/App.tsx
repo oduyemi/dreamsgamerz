@@ -15,7 +15,8 @@ import Register from "./pages/Register";
 
 /* GAMES */
 import { MovingPhotoGame } from "./components/movinggame/Intro";
-import { MovingGame } from "./components/movinggame/Game";
+// import { MovingGame } from "./components/movinggame/Game";
+import { GameArena } from './components/MovingPictureGame';
 import MovingPicturePlayGame from "./components/MovingPictureGamePlay";
 import { TournamentLobby } from "./components/TournamentLobby";
 
@@ -55,7 +56,7 @@ const App: React.FC = () => {
             {/* GAMES */}
             <Route exact path="/games" component={Competition} />
             <Route exact path="/games/moving-picture" component={MovingPhotoGame} />
-            <Route exact path="/games/moving-game/start" component={MovingGame} />
+            <Route exact path="/games/moving-game/start" component={GameArena} />
             <Route exact path="/games/moving-picture/lobby" component={TournamentLobby} />
             <Route exact path="/games/moving-picture/play" component={MovingPicturePlayGame} />
 
