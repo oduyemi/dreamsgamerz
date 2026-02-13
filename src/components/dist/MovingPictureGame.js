@@ -1,147 +1,174 @@
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 exports.__esModule = true;
-exports.MovingPictureGameTab = void 0;
+exports.GameArena = void 0;
 var react_1 = require("react");
 var material_1 = require("@mui/material");
 var framer_motion_1 = require("framer-motion");
-var Star_1 = require("@mui/icons-material/Star");
-var Favorite_1 = require("@mui/icons-material/Favorite");
-var InfoOutlined_1 = require("@mui/icons-material/InfoOutlined");
-var CompetitionDetailsModal_1 = require("./CompetitionDetailsModal");
-var CompetitionTooltip_1 = require("./CompetitionTooltip");
-var TournamentLobby_1 = require("./TournamentLobby");
-exports.MovingPictureGameTab = function () {
-    var _a = react_1.useState(5), lives = _a[0], setLives = _a[1];
-    var _b = react_1.useState(false), detailsOpen = _b[0], setDetailsOpen = _b[1];
-    var _c = react_1.useState(null), selectedComp = _c[0], setSelectedComp = _c[1];
-    var _d = react_1.useState(false), showLobby = _d[0], setShowLobby = _d[1];
-    /* ---------------- DATA ---------------- */
-    var competitions = [
-        { players: 2, prize: "50 USDT", comingSoon: false },
-        { players: 2, prize: "100 USDT", comingSoon: false },
-        { players: 2, prize: "500 USDT", comingSoon: false },
-        { players: 2, prize: "1000 USDT", comingSoon: false },
-        { players: 2, prize: "100000 USDT", comingSoon: false },
-        { players: 2, prize: "500000 USDT", comingSoon: true },
-    ];
-    var lifePackages = [
-        { cost: 1, lives: 3, coins: 100 },
-        { cost: 2, lives: 7, coins: 200 },
-        { cost: 3, lives: 11, coins: 300 },
-    ];
-    var handleBuyLives = function (extraLives) {
-        setLives(function (prev) { return prev + extraLives; });
+exports.GameArena = function (_a) {
+    var lives = _a.lives, onLoseLife = _a.onLoseLife;
+    var arenaRef = react_1.useRef(null);
+    var _b = react_1.useState({ width: 600, height: 400 }), arenaSize = _b[0], setArenaSize = _b[1];
+    var _c = react_1.useState([]), balls = _c[0], setBalls = _c[1];
+    var _d = react_1.useState(0), score = _d[0], setScore = _d[1];
+    var _e = react_1.useState(1), level = _e[0], setLevel = _e[1];
+    var _f = react_1.useState(false), netSwing = _f[0], setNetSwing = _f[1];
+    var imageSize = 30;
+    var circleSize = 260;
+    var holeSize = 160;
+    var swishSound = react_1.useRef(null);
+    /* ---------- INIT ---------- */
+    react_1.useEffect(function () {
+        if (arenaRef.current) {
+            setArenaSize({
+                width: arenaRef.current.offsetWidth,
+                height: arenaRef.current.offsetHeight
+            });
+        }
+        swishSound.current = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3");
+    }, []);
+    /* ---------- SPAWN BALLS ---------- */
+    react_1.useEffect(function () {
+        if (lives <= 0)
+            return;
+        var spawnInterval = setInterval(function () {
+            spawnBall();
+        }, Math.max(2000 - level * 150, 600)); // difficulty increases
+        return function () { return clearInterval(spawnInterval); };
+    }, [level, lives]);
+    var spawnBall = function () {
+        var width = arenaSize.width, height = arenaSize.height;
+        var edge = Math.floor(Math.random() * 4);
+        var startX = 0;
+        var startY = 0;
+        if (edge === 0) {
+            startX = Math.random() * width;
+            startY = -imageSize;
+        }
+        else if (edge === 1) {
+            startX = width + imageSize;
+            startY = Math.random() * height;
+        }
+        else if (edge === 2) {
+            startX = Math.random() * width;
+            startY = height + imageSize;
+        }
+        else {
+            startX = -imageSize;
+            startY = Math.random() * height;
+        }
+        setBalls(function (prev) { return __spreadArrays(prev, [
+            { id: Date.now() + Math.random(), startX: startX, startY: startY },
+        ]); });
     };
-    /* ---------------- TOURNAMENT LOBBY ---------------- */
-    if (showLobby && selectedComp) {
-        return (react_1["default"].createElement(material_1.Box, { sx: {
-                minHeight: "100vh",
+    /* ---------- HANDLE CLICK ---------- */
+    var handleHit = function (id) {
+        setBalls(function (prev) { return prev.filter(function (b) { return b.id !== id; }); });
+        setScore(function (prev) {
+            var newScore = prev + 1;
+            if (newScore % 5 === 0) {
+                setLevel(function (l) { return l + 1; });
+            }
+            return newScore;
+        });
+        if (swishSound.current) {
+            swishSound.current.currentTime = 0;
+            swishSound.current.play();
+        }
+        triggerNetSwing();
+    };
+    /* ---------- FAIL ---------- */
+    var handleMiss = function (id) {
+        setBalls(function (prev) { return prev.filter(function (b) { return b.id !== id; }); });
+        onLoseLife();
+        triggerNetSwing();
+    };
+    /* ---------- NET SWING ---------- */
+    var triggerNetSwing = function () {
+        setNetSwing(true);
+        setTimeout(function () { return setNetSwing(false); }, 600);
+    };
+    var centerX = arenaSize.width / 2 - imageSize / 2;
+    var centerY = arenaSize.height / 2 - imageSize / 2;
+    return (react_1["default"].createElement(material_1.Box, { ref: arenaRef, sx: {
+            position: "relative",
+            width: "100%",
+            height: 450,
+            mt: 4,
+            borderRadius: 4,
+            background: "radial-gradient(circle,#f8fafc,#e2e8f0)",
+            overflow: "hidden"
+        } },
+        react_1["default"].createElement(material_1.Typography, { sx: {
+                position: "absolute",
+                top: 10,
+                left: 20,
+                fontWeight: 800
+            } },
+            "Score: ",
+            score,
+            " | Level: ",
+            level),
+        react_1["default"].createElement(material_1.Box, { sx: {
+                position: "absolute",
+                width: circleSize,
+                height: circleSize,
+                borderRadius: "50%",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                background: "linear-gradient(145deg,#eef2f3,#dfe9f3)",
-                p: 3
+                justifyContent: "center"
             } },
-            react_1["default"].createElement(TournamentLobby_1.TournamentLobby, { playersRequired: selectedComp.players, prize: selectedComp.prize, onStartGame: function () {
-                    console.log("Game Started");
-                    setShowLobby(false);
-                } })));
-    }
-    /* ---------------- MAIN VIEW ---------------- */
-    return (react_1["default"].createElement(material_1.Box, { sx: {
-            width: "100%",
-            py: 8,
-            background: "linear-gradient(145deg,#eef2f3,#dfe9f3)"
-        } },
-        react_1["default"].createElement(material_1.Container, { maxWidth: "md" },
-            react_1["default"].createElement(material_1.Box, { textAlign: "center", mb: 6 },
-                react_1["default"].createElement(material_1.Typography, { variant: "h3", sx: {
-                        fontWeight: 800,
-                        background: "linear-gradient(45deg,#355cde,#caa84c)",
-                        backgroundClip: "text",
-                        color: "transparent"
-                    } }, "Moving Picture Game"),
-                react_1["default"].createElement(material_1.Typography, { variant: "subtitle1", sx: { opacity: 0.75 } }, "Stunning visuals. Premium rewards. Elite competition.")),
-            react_1["default"].createElement(material_1.Card, { sx: {
-                    p: 4,
-                    borderRadius: 6,
-                    background: "rgba(255,255,255,0.65)",
-                    backdropFilter: "blur(18px)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.15)"
-                } },
-                react_1["default"].createElement(material_1.Box, { mb: 5, textAlign: "center" },
-                    react_1["default"].createElement(material_1.Typography, { variant: "h5", fontWeight: 700 },
-                        react_1["default"].createElement(Favorite_1["default"], { sx: { color: "#e63946", mr: 1 } }),
-                        "Lives: ",
-                        lives),
-                    react_1["default"].createElement(material_1.Grid, { container: true, spacing: 3, justifyContent: "center", mt: 2 }, lifePackages.map(function (pkg, i) { return (react_1["default"].createElement(material_1.Grid, { item: true, xs: 12, sm: 4, key: i },
-                        react_1["default"].createElement(framer_motion_1.motion.div, { whileHover: { scale: 1.06 } },
-                            react_1["default"].createElement(material_1.Card, { onClick: function () { return handleBuyLives(pkg.lives); }, sx: {
-                                    cursor: "pointer",
-                                    py: 3,
-                                    borderRadius: 4,
-                                    textAlign: "center",
-                                    background: "linear-gradient(180deg,#ffffff,#f7f9fc)",
-                                    boxShadow: "0 8px 24px rgba(0,0,0,0.1)"
-                                } },
-                                react_1["default"].createElement(material_1.Typography, { variant: "h6", fontWeight: 800 },
-                                    pkg.cost,
-                                    " USDT"),
-                                react_1["default"].createElement(material_1.Typography, { color: "text.secondary" },
-                                    "+",
-                                    pkg.lives,
-                                    " Lives"),
-                                react_1["default"].createElement(material_1.Typography, { fontWeight: 600, color: "text.secondary" },
-                                    "+",
-                                    pkg.coins.toLocaleString(),
-                                    " Coins"))))); }))),
-                react_1["default"].createElement(material_1.Divider, { sx: { my: 4, borderColor: "rgba(202,168,76,0.4)" } }),
-                react_1["default"].createElement(material_1.Typography, { variant: "h5", fontWeight: 800, textAlign: "center", sx: {
-                        background: "linear-gradient(45deg,#355cde,#caa84c)",
-                        backgroundClip: "text",
-                        color: "transparent",
-                        mb: 3
-                    } }, "Competitions"),
-                react_1["default"].createElement(material_1.Grid, { container: true, spacing: 3 }, competitions.map(function (comp, index) { return (react_1["default"].createElement(material_1.Grid, { item: true, xs: 12, key: index },
-                    react_1["default"].createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } },
-                        react_1["default"].createElement(material_1.Card, { sx: {
-                                p: 2,
-                                borderRadius: 5,
-                                background: "linear-gradient(180deg,#ffffff,#f7f9fc)",
-                                boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
-                            } },
-                            react_1["default"].createElement(material_1.CardContent, null,
-                                react_1["default"].createElement(material_1.Box, { display: "flex", justifyContent: "space-between" },
-                                    react_1["default"].createElement(material_1.Box, null,
-                                        react_1["default"].createElement(Star_1["default"], { sx: { fontSize: 42, color: "#caa84c" } }),
-                                        react_1["default"].createElement(material_1.Typography, { fontWeight: 700 },
-                                            comp.players,
-                                            " Players")),
-                                    react_1["default"].createElement(material_1.Box, { textAlign: "right" },
-                                        react_1["default"].createElement(material_1.Box, { display: "flex", alignItems: "center", gap: 0.5 },
-                                            react_1["default"].createElement(material_1.Typography, { fontWeight: 700 }, comp.prize),
-                                            !comp.comingSoon && (react_1["default"].createElement(material_1.Tooltip, { title: react_1["default"].createElement(CompetitionTooltip_1.CompetitionTooltip, null), arrow: true },
-                                                react_1["default"].createElement(material_1.IconButton, { size: "small", sx: { color: "#caa84c" } },
-                                                    react_1["default"].createElement(InfoOutlined_1["default"], { fontSize: "small" }))))),
-                                        react_1["default"].createElement(material_1.Typography, { variant: "body2", color: "text.secondary" }, "Prize Pool"))),
-                                react_1["default"].createElement(material_1.Box, { display: "flex", gap: 2, mt: 3 },
-                                    react_1["default"].createElement(material_1.Button, { variant: "outlined", fullWidth: true, disabled: comp.comingSoon, onClick: function () {
-                                            setSelectedComp(comp);
-                                            setDetailsOpen(true);
-                                        }, sx: {
-                                            borderRadius: 2,
-                                            borderColor: "#caa84c",
-                                            color: "#caa84c",
-                                            fontWeight: 700
-                                        } }, "Details"),
-                                    react_1["default"].createElement(material_1.Button, { variant: "contained", fullWidth: true, disabled: comp.comingSoon, onClick: function () {
-                                            setSelectedComp(comp);
-                                            setShowLobby(true);
-                                        }, sx: {
-                                            borderRadius: 2,
-                                            fontWeight: 800,
-                                            background: "linear-gradient(45deg,#caa84c,#b5944a)"
-                                        } }, "Join Now"))))))); })))),
-        selectedComp && (react_1["default"].createElement(CompetitionDetailsModal_1.CompetitionDetailsModal, { open: detailsOpen, onClose: function () { return setDetailsOpen(false); }, players: selectedComp.players, prize: selectedComp.prize }))));
+            react_1["default"].createElement(material_1.Box, { sx: {
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    border: "18px solid #ff6b00",
+                    boxShadow: "0 0 40px rgba(255,107,0,0.7)"
+                } }),
+            react_1["default"].createElement(material_1.Box, { sx: {
+                    width: holeSize,
+                    height: holeSize,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle,#000 40%,#111 70%)",
+                    boxShadow: "inset 0 0 40px rgba(0,0,0,1)"
+                } })),
+        balls.map(function (ball) { return (react_1["default"].createElement(framer_motion_1.motion.img, { key: ball.id, src: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png", initial: { x: ball.startX, y: ball.startY }, animate: {
+                x: centerX,
+                y: centerY,
+                transition: {
+                    duration: 3 - level * 0.2,
+                    ease: "linear"
+                }
+            }, onAnimationComplete: function () { return handleMiss(ball.id); }, onClick: function () { return handleHit(ball.id); }, style: {
+                position: "absolute",
+                width: imageSize,
+                height: imageSize,
+                cursor: "pointer"
+            }, whileTap: {
+                scale: 0.6,
+                y: centerY + 20,
+                transition: {
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 10
+                }
+            } })); }),
+        lives <= 0 && (react_1["default"].createElement(material_1.Typography, { variant: "h4", sx: {
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+                fontWeight: 900,
+                color: "#e63946"
+            } }, "GAME OVER"))));
 };
-exports["default"] = exports.MovingPictureGameTab;

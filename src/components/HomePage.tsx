@@ -47,12 +47,21 @@ export const HomePage = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const userId = user?.userId;
-
   const [messages, setMessages] = useState<
-    { from: 'user' | 'admin' | 'system'; text: string }[]
-  >([{ from: 'system', text: '👋 Hi! How can we help you today?' }]);
+  {
+    from: 'user' | 'admin' | 'system';
+    text: string;
+    createdAt?: Date;
+  }[]
+>([
+  {
+    from: 'system',
+    text: '👋 Hi! How can we help you today?',
+    createdAt: new Date(),
+  },
+]);
+
 
   // =============================
   // Load messages when chat opens
@@ -66,12 +75,19 @@ export const HomePage = () => {
         const mapped = data.map((c: any) => ({
           from: c.sender === 'USER' ? 'user' : 'admin',
           text: c.message,
+          createdAt: new Date(c.createdAt || Date.now()),
         }));
+        
 
         setMessages([
-          { from: 'system', text: '👋 Hi! How can we help you today?' },
-          ...mapped,
-        ]);
+  {
+    from: 'system',
+    text: '👋 Hi! How can we help you today?',
+    createdAt: new Date(),
+  },
+  ...mapped,
+]);
+
       } catch (err) {
         console.error('Failed to load support chats', err);
       }
@@ -80,7 +96,7 @@ export const HomePage = () => {
     loadChats();
   }, [chatOpen]);
 
-// Real-time admin replies (Pusher)
+  // Real-time admin replies (Pusher)
   useEffect(() => {
     if (!chatOpen || !userId) return;
 
@@ -91,19 +107,22 @@ export const HomePage = () => {
     const channelName = `support-user-${userId}`;
     const channel = pusher.subscribe(channelName);
 
-    channel.bind("message", (data: { sender: "USER" | "ADMIN"; message: string }) => {
+    const handler = (data: { sender: "USER" | "ADMIN"; message: string }) => {
       setMessages(prev => [
         ...prev,
         {
           from: data.sender === "ADMIN" ? "admin" : "user",
           text: data.message,
+          createdAt: new Date(),
         },
       ]);
-    });
+    };
+
+    channel.bind("message", handler);
 
     return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
+      channel.unbind("message", handler);
+      pusher.unsubscribe(channelName);
       pusher.disconnect();
     };
   }, [chatOpen, userId]);
@@ -124,7 +143,11 @@ export const HomePage = () => {
 
     const text = message;
 
-    setMessages(prev => [...prev, { from: 'user', text }]);
+    setMessages(prev => [
+      ...prev,
+      { from: 'user', text, createdAt: new Date() },
+    ]);
+
     setMessage('');
 
     try {
@@ -482,10 +505,31 @@ export const HomePage = () => {
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            fontWeight: 600,
+            alignItems: 'center',
+            borderBottom: '1px solid #eee',
           }}
         >
-          Live Chat
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Avatar
+              sx={{
+                width: 36,
+                height: 36,
+                backgroundColor: '#f2c94c',
+              }}
+            >
+              👩‍💼
+            </Avatar>
+
+            <Box>
+              <Typography fontWeight={600} fontSize={14}>
+                Support Agent
+              </Typography>
+              <Typography fontSize={11} color="green">
+                ● Online
+              </Typography>
+            </Box>
+          </Stack>
+
           <IconButton onClick={() => setChatOpen(false)}>
             <CloseIcon />
           </IconButton>
@@ -501,22 +545,102 @@ export const HomePage = () => {
             backgroundColor: '#fafafa',
           }}
         >
-          {messages.map((msg, i) => (
-            <Box
-              key={i}
-              sx={{
-                alignSelf: msg.from === 'user' ? 'flex-end' : 'flex-start',
-                backgroundColor: msg.from === 'user' ? '#5b7fff' : '#ffffff',
-                color: msg.from === 'user' ? '#fff' : '#000',
-                px: 2,
-                py: 1,
-                borderRadius: 2,
-                maxWidth: '80%',
-              }}
-            >
-              <Typography fontSize={13}>{msg.text}</Typography>
-            </Box>
-          ))}
+          {messages.map((msg, i) => {
+            const isUser = msg.from === 'user';
+            const isSupport = msg.from !== 'user';
+
+            const nextMsg = messages[i + 1];
+            const showAvatar =
+              isSupport &&
+              (!nextMsg || nextMsg.from === 'user');
+
+            const time = msg.createdAt
+              ? new Date(msg.createdAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '';
+
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  display: 'flex',
+                  justifyContent: isUser ? 'flex-end' : 'flex-start',
+                  width: '100%',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    gap: 1,
+                    maxWidth: '85%',
+                  }}
+                >
+                  {isSupport && (
+                    showAvatar ? (
+                      <Avatar
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          backgroundColor: '#f2c94c',
+                        }}
+                      >
+                        👩‍💼
+                      </Avatar>
+                    ) : (
+                      <Box sx={{ width: 32 }} />
+                    )
+                  )}
+
+                  <Box>
+                    {(i === 0 || messages[i - 1].from !== msg.from) && (
+                      <Typography
+                        fontSize={11}
+                        fontWeight={600}
+                        color={isUser ? '#5b7fff' : '#888'}
+                        sx={{ mb: 0.3 }}
+                      >
+                        {isUser ? '🙂 You' : 'Support Agent'}
+                      </Typography>
+                    )}
+
+                    <Box
+                      sx={{
+                        backgroundColor: isUser ? '#5b7fff' : '#fff',
+                        color: isUser ? '#fff' : '#000',
+                        px: 2,
+                        py: 1.2,
+                        borderRadius: 3,
+                        border: isUser ? 'none' : '1px solid #eee',
+                        boxShadow: '0 3px 10px rgba(0,0,0,0.05)',
+                      }}
+                    >
+                      <Typography fontSize={14}>{msg.text}</Typography>
+                    </Box>
+
+                    {(!nextMsg || nextMsg.from !== msg.from) && (
+                      <Typography
+                        fontSize={10}
+                        color="text.secondary"
+                        sx={{
+                          mt: 0.5,
+                          textAlign: isUser ? 'right' : 'left',
+                        }}
+                      >
+                        {time}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              </motion.div>
+            );
+          })}
+
           <div ref={messagesEndRef} />
         </DialogContent>
 

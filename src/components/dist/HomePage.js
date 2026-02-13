@@ -77,7 +77,13 @@ exports.HomePage = function () {
     var _e = react_2.useState(''), message = _e[0], setMessage = _e[1];
     var messagesEndRef = react_2.useRef(null);
     var userId = user === null || user === void 0 ? void 0 : user.userId;
-    var _f = react_2.useState([{ from: 'system', text: '👋 Hi! How can we help you today?' }]), messages = _f[0], setMessages = _f[1];
+    var _f = react_2.useState([
+        {
+            from: 'system',
+            text: '👋 Hi! How can we help you today?',
+            createdAt: new Date()
+        },
+    ]), messages = _f[0], setMessages = _f[1];
     // =============================
     // Load messages when chat opens
     // =============================
@@ -95,10 +101,15 @@ exports.HomePage = function () {
                         data = _a.sent();
                         mapped = data.map(function (c) { return ({
                             from: c.sender === 'USER' ? 'user' : 'admin',
-                            text: c.message
+                            text: c.message,
+                            createdAt: new Date(c.createdAt || Date.now())
                         }); });
                         setMessages(__spreadArrays([
-                            { from: 'system', text: '👋 Hi! How can we help you today?' }
+                            {
+                                from: 'system',
+                                text: '👋 Hi! How can we help you today?',
+                                createdAt: new Date()
+                            }
                         ], mapped));
                         return [3 /*break*/, 3];
                     case 2:
@@ -120,17 +131,19 @@ exports.HomePage = function () {
         });
         var channelName = "support-user-" + userId;
         var channel = pusher.subscribe(channelName);
-        channel.bind("message", function (data) {
+        var handler = function (data) {
             setMessages(function (prev) { return __spreadArrays(prev, [
                 {
                     from: data.sender === "ADMIN" ? "admin" : "user",
-                    text: data.message
+                    text: data.message,
+                    createdAt: new Date()
                 },
             ]); });
-        });
+        };
+        channel.bind("message", handler);
         return function () {
-            channel.unbind_all();
-            channel.unsubscribe();
+            channel.unbind("message", handler);
+            pusher.unsubscribe(channelName);
             pusher.disconnect();
         };
     }, [chatOpen, userId]);
@@ -152,7 +165,9 @@ exports.HomePage = function () {
                     if (!message.trim())
                         return [2 /*return*/];
                     text = message;
-                    setMessages(function (prev) { return __spreadArrays(prev, [{ from: 'user', text: text }]); });
+                    setMessages(function (prev) { return __spreadArrays(prev, [
+                        { from: 'user', text: text, createdAt: new Date() },
+                    ]); });
                     setMessage('');
                     _a.label = 1;
                 case 1:
@@ -374,9 +389,18 @@ exports.HomePage = function () {
             React.createElement(material_1.DialogTitle, { sx: {
                     display: 'flex',
                     justifyContent: 'space-between',
-                    fontWeight: 600
+                    alignItems: 'center',
+                    borderBottom: '1px solid #eee'
                 } },
-                "Live Chat",
+                React.createElement(material_1.Stack, { direction: "row", alignItems: "center", spacing: 1 },
+                    React.createElement(material_1.Avatar, { sx: {
+                            width: 36,
+                            height: 36,
+                            backgroundColor: '#f2c94c'
+                        } }, "\uD83D\uDC69\u200D\uD83D\uDCBC"),
+                    React.createElement(material_1.Box, null,
+                        React.createElement(material_1.Typography, { fontWeight: 600, fontSize: 14 }, "Support Agent"),
+                        React.createElement(material_1.Typography, { fontSize: 11, color: "green" }, "\u25CF Online"))),
                 React.createElement(material_1.IconButton, { onClick: function () { return setChatOpen(false); } },
                     React.createElement(Close_1["default"], null))),
             React.createElement(material_1.DialogContent, { sx: {
@@ -387,16 +411,51 @@ exports.HomePage = function () {
                     overflowY: 'auto',
                     backgroundColor: '#fafafa'
                 } },
-                messages.map(function (msg, i) { return (React.createElement(material_1.Box, { key: i, sx: {
-                        alignSelf: msg.from === 'user' ? 'flex-end' : 'flex-start',
-                        backgroundColor: msg.from === 'user' ? '#5b7fff' : '#ffffff',
-                        color: msg.from === 'user' ? '#fff' : '#000',
-                        px: 2,
-                        py: 1,
-                        borderRadius: 2,
-                        maxWidth: '80%'
-                    } },
-                    React.createElement(material_1.Typography, { fontSize: 13 }, msg.text))); }),
+                messages.map(function (msg, i) {
+                    var isUser = msg.from === 'user';
+                    var isSupport = msg.from !== 'user';
+                    var nextMsg = messages[i + 1];
+                    var showAvatar = isSupport &&
+                        (!nextMsg || nextMsg.from === 'user');
+                    var time = msg.createdAt
+                        ? new Date(msg.createdAt).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })
+                        : '';
+                    return (React.createElement(framer_motion_1.motion.div, { key: i, initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.25 }, style: {
+                            display: 'flex',
+                            justifyContent: isUser ? 'flex-end' : 'flex-start',
+                            width: '100%'
+                        } },
+                        React.createElement(material_1.Box, { sx: {
+                                display: 'flex',
+                                alignItems: 'flex-end',
+                                gap: 1,
+                                maxWidth: '85%'
+                            } },
+                            isSupport && (showAvatar ? (React.createElement(material_1.Avatar, { sx: {
+                                    width: 32,
+                                    height: 32,
+                                    backgroundColor: '#f2c94c'
+                                } }, "\uD83D\uDC69\u200D\uD83D\uDCBC")) : (React.createElement(material_1.Box, { sx: { width: 32 } }))),
+                            React.createElement(material_1.Box, null,
+                                (i === 0 || messages[i - 1].from !== msg.from) && (React.createElement(material_1.Typography, { fontSize: 11, fontWeight: 600, color: isUser ? '#5b7fff' : '#888', sx: { mb: 0.3 } }, isUser ? '🙂 You' : 'Support Agent')),
+                                React.createElement(material_1.Box, { sx: {
+                                        backgroundColor: isUser ? '#5b7fff' : '#fff',
+                                        color: isUser ? '#fff' : '#000',
+                                        px: 2,
+                                        py: 1.2,
+                                        borderRadius: 3,
+                                        border: isUser ? 'none' : '1px solid #eee',
+                                        boxShadow: '0 3px 10px rgba(0,0,0,0.05)'
+                                    } },
+                                    React.createElement(material_1.Typography, { fontSize: 14 }, msg.text)),
+                                (!nextMsg || nextMsg.from !== msg.from) && (React.createElement(material_1.Typography, { fontSize: 10, color: "text.secondary", sx: {
+                                        mt: 0.5,
+                                        textAlign: isUser ? 'right' : 'left'
+                                    } }, time))))));
+                }),
                 React.createElement("div", { ref: messagesEndRef })),
             React.createElement(material_1.Box, { sx: { display: 'flex', gap: 1, p: 1.5 } },
                 React.createElement(material_1.TextField, { fullWidth: true, size: "small", placeholder: "Type a message\u2026", value: message, onChange: function (e) { return setMessage(e.target.value); }, onKeyDown: function (e) {
