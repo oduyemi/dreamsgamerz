@@ -34,24 +34,25 @@ export const GameArena: React.FC<GameArenaProps> = ({
   /* ---------- INIT & RESIZE ---------- */
 
   useEffect(() => {
-    const updateSize = () => {
-      if (arenaRef.current) {
-        setArenaSize({
-          width: arenaRef.current.offsetWidth,
-          height: arenaRef.current.offsetHeight,
-        });
-      }
-    };
-
-    updateSize();
-    window.addEventListener("resize", updateSize);
-
+    if (!arenaRef.current) return;
+  
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      setArenaSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+  
+    observer.observe(arenaRef.current);
+  
     swishSound.current = new Audio(
       "https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3"
     );
-
-    return () => window.removeEventListener("resize", updateSize);
+  
+    return () => observer.disconnect();
   }, []);
+  
 
   /* ---------- SPAWN BALLS ---------- */
 

@@ -25,18 +25,18 @@ exports.GameArena = function (_a) {
     var holeSize = circleSize * 0.6;
     /* ---------- INIT & RESIZE ---------- */
     react_1.useEffect(function () {
-        var updateSize = function () {
-            if (arenaRef.current) {
-                setArenaSize({
-                    width: arenaRef.current.offsetWidth,
-                    height: arenaRef.current.offsetHeight
-                });
-            }
-        };
-        updateSize();
-        window.addEventListener("resize", updateSize);
+        if (!arenaRef.current)
+            return;
+        var observer = new ResizeObserver(function (entries) {
+            var entry = entries[0];
+            setArenaSize({
+                width: entry.contentRect.width,
+                height: entry.contentRect.height
+            });
+        });
+        observer.observe(arenaRef.current);
         swishSound.current = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3");
-        return function () { return window.removeEventListener("resize", updateSize); };
+        return function () { return observer.disconnect(); };
     }, []);
     /* ---------- SPAWN BALLS ---------- */
     react_1.useEffect(function () {
