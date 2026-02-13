@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography } from "@mui/material";
-import { motion } from "framer-motion";
+import { Box, Typography, Stack } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface GameArenaProps {
   lives: number;
@@ -18,32 +18,39 @@ export const GameArena: React.FC<GameArenaProps> = ({
   onLoseLife,
 }) => {
   const arenaRef = useRef<HTMLDivElement>(null);
-  const [arenaSize, setArenaSize] = useState({ width: 600, height: 400 });
+  const swishSound = useRef<HTMLAudioElement | null>(null);
+
+  const [arenaSize, setArenaSize] = useState({ width: 0, height: 0 });
   const [balls, setBalls] = useState<Ball[]>([]);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [netSwing, setNetSwing] = useState(false);
 
-  const imageSize = 30;
-  const circleSize = 260;
-  const holeSize = 160;  
+  /* ---------- RESPONSIVE SIZES ---------- */
 
+  const imageSize = Math.max(24, arenaSize.width * 0.05);
+  const circleSize = Math.min(arenaSize.width * 0.5, 320);
+  const holeSize = circleSize * 0.6;
 
-  const swishSound = useRef<HTMLAudioElement | null>(null);
-
-  /* ---------- INIT ---------- */
+  /* ---------- INIT & RESIZE ---------- */
 
   useEffect(() => {
-    if (arenaRef.current) {
-      setArenaSize({
-        width: arenaRef.current.offsetWidth,
-        height: arenaRef.current.offsetHeight,
-      });
-    }
+    const updateSize = () => {
+      if (arenaRef.current) {
+        setArenaSize({
+          width: arenaRef.current.offsetWidth,
+          height: arenaRef.current.offsetHeight,
+        });
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
 
     swishSound.current = new Audio(
       "https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3"
     );
+
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   /* ---------- SPAWN BALLS ---------- */
@@ -53,13 +60,14 @@ export const GameArena: React.FC<GameArenaProps> = ({
 
     const spawnInterval = setInterval(() => {
       spawnBall();
-    }, Math.max(2000 - level * 150, 600)); // difficulty increases
+    }, Math.max(2000 - level * 150, 600));
 
     return () => clearInterval(spawnInterval);
-  }, [level, lives]);
+  }, [level, lives, arenaSize]);
 
   const spawnBall = () => {
     const { width, height } = arenaSize;
+    if (!width || !height) return;
 
     const edge = Math.floor(Math.random() * 4);
     let startX = 0;
@@ -85,41 +93,23 @@ export const GameArena: React.FC<GameArenaProps> = ({
     ]);
   };
 
-  /* ---------- HANDLE CLICK ---------- */
+  /* ---------- GAME LOGIC ---------- */
 
   const handleHit = (id: number) => {
     setBalls((prev) => prev.filter((b) => b.id !== id));
+
     setScore((prev) => {
       const newScore = prev + 1;
-
-      if (newScore % 5 === 0) {
-        setLevel((l) => l + 1);
-      }
-
+      if (newScore % 5 === 0) setLevel((l) => l + 1);
       return newScore;
     });
 
-    if (swishSound.current) {
-      swishSound.current.currentTime = 0;
-      swishSound.current.play();
-    }
-
-    triggerNetSwing();
+    swishSound.current?.play();
   };
-
-  /* ---------- FAIL ---------- */
 
   const handleMiss = (id: number) => {
     setBalls((prev) => prev.filter((b) => b.id !== id));
     onLoseLife();
-    triggerNetSwing();
-  };
-
-  /* ---------- NET SWING ---------- */
-
-  const triggerNetSwing = () => {
-    setNetSwing(true);
-    setTimeout(() => setNetSwing(false), 600);
   };
 
   const centerX = arenaSize.width / 2 - imageSize / 2;
@@ -131,26 +121,43 @@ export const GameArena: React.FC<GameArenaProps> = ({
       sx={{
         position: "relative",
         width: "100%",
-        height: 450,
-        mt: 4,
-        borderRadius: 4,
-        background: "radial-gradient(circle,#f8fafc,#e2e8f0)",
+        height: "100dvh",
+        background:
+          "radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)",
         overflow: "hidden",
       }}
     >
-      {/* SCORE */}
-      <Typography
+      {/* HUD */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
         sx={{
           position: "absolute",
-          top: 10,
+          top: 20,
           left: 20,
-          fontWeight: 800,
+          right: 20,
+          px: 3,
+          py: 1.5,
+          borderRadius: 3,
+          backdropFilter: "blur(12px)",
+          background: "rgba(255,255,255,0.08)",
+          color: "#fff",
         }}
       >
-        Score: {score} | Level: {level}
-      </Typography>
+        <Typography fontWeight={700}>
+          Score: {score}
+        </Typography>
 
-      {/* BASKET RIM */}
+        <Typography fontWeight={700}>
+          Level: {level}
+        </Typography>
+
+        <Typography fontWeight={700}>
+          Lives: {lives}
+        </Typography>
+      </Stack>
+
+      {/* RIM */}
       <Box
         sx={{
           position: "absolute",
@@ -165,26 +172,23 @@ export const GameArena: React.FC<GameArenaProps> = ({
           justifyContent: "center",
         }}
       >
-        {/* Rim */}
         <Box
           sx={{
             position: "absolute",
             width: "100%",
             height: "100%",
             borderRadius: "50%",
-            border: "18px solid #ff6b00",
-            boxShadow: "0 0 40px rgba(255,107,0,0.7)",
+            border: "16px solid #ff6b00",
+            boxShadow: "0 0 40px rgba(255,107,0,0.6)",
           }}
         />
 
-        {/* Actual Hole */}
         <Box
           sx={{
             width: holeSize,
             height: holeSize,
             borderRadius: "50%",
-            background: "radial-gradient(circle,#000 40%,#111 70%)",
-            boxShadow: "inset 0 0 40px rgba(0,0,0,1)",
+            background: "#000",
           }}
         />
       </Box>
@@ -199,7 +203,7 @@ export const GameArena: React.FC<GameArenaProps> = ({
             x: centerX,
             y: centerY,
             transition: {
-              duration: 3 - level * 0.2,
+              duration: Math.max(3 - level * 0.2, 1),
               ease: "linear",
             },
           }}
@@ -211,33 +215,35 @@ export const GameArena: React.FC<GameArenaProps> = ({
             height: imageSize,
             cursor: "pointer",
           }}
-          whileTap={{
-            scale: 0.6,
-            y: centerY + 20,
-            transition: {
-              type: "spring",
-              stiffness: 400,
-              damping: 10,
-            },
-          }}
+          whileTap={{ scale: 0.7 }}
         />
       ))}
 
-      {lives <= 0 && (
-        <Typography
-          variant="h4"
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%,-50%)",
-            fontWeight: 900,
-            color: "#e63946",
-          }}
-        >
-          GAME OVER
-        </Typography>
-      )}
+      {/* GAME OVER */}
+      <AnimatePresence>
+        {lives <= 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.8)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="h3"
+              sx={{ color: "#ff4d4d", fontWeight: 900 }}
+            >
+              GAME OVER
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Box>
   );
 };

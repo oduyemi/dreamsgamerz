@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route, Redirect } from "react-router-dom";
@@ -40,6 +41,12 @@ import "./theme/variables.css";
 setupIonicReact();
 
 const App: React.FC = () => {
+  const [lives, setLives] = React.useState(3);
+
+  const handleLoseLife = () => {
+    setLives((prev) => Math.max(prev - 1, 0));
+  };
+
   return (
     <IonApp>
       <UserProvider>
@@ -56,7 +63,16 @@ const App: React.FC = () => {
             {/* GAMES */}
             <Route exact path="/games" component={Competition} />
             <Route exact path="/games/moving-picture" component={MovingPhotoGame} />
-            <Route exact path="/games/moving-game/start" component={GameArena} />
+            <Route
+              exact
+              path="/games/moving-game/start"
+              render={() => (
+                <GameArena
+                  lives={lives}
+                  onLoseLife={handleLoseLife}
+                />
+              )}
+            />
             <Route exact path="/games/moving-picture/lobby" component={TournamentLobby} />
             <Route exact path="/games/moving-picture/play" component={MovingPicturePlayGame} />
 
