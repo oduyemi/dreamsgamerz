@@ -27,12 +27,13 @@ exports.Wallet = function () {
     var _k = react_1.useState(0), convertAmount = _k[0], setConvertAmount = _k[1];
     var _l = react_1.useState(0), transferAmount = _l[0], setTransferAmount = _l[1];
     var _m = react_1.useState(""), transferTo = _m[0], setTransferTo = _m[1];
-    var _o = react_1.useState("coin-to-usdt"), convertDirection = _o[0], setConvertDirection = _o[1];
-    var _p = react_1.useState([
+    var _o = react_1.useState("usdt"), transferAsset = _o[0], setTransferAsset = _o[1];
+    var _p = react_1.useState("coin-to-usdt"), convertDirection = _p[0], setConvertDirection = _p[1];
+    var _q = react_1.useState([
         { id: 1, type: "deposit", amount: 200, date: "Today · 10:30 AM" },
         { id: 2, type: "withdrawal", amount: 100, date: "Yesterday · 3:00 PM" },
         { id: 3, type: "win", amount: 25, date: "Oct 1 · 8:00 PM" },
-    ]), transactions = _p[0], setTransactions = _p[1];
+    ]), transactions = _q[0], setTransactions = _q[1];
     var totalBalance = (usdtBalance + coinBalance / 100).toFixed(2);
     var convertedValue = convertDirection === "coin-to-usdt"
         ? (convertAmount / 100).toFixed(2)
@@ -82,10 +83,20 @@ exports.Wallet = function () {
         setConvertOpen(false);
     };
     var handleTransfer = function () {
-        if (!transferTo || transferAmount <= 0 || transferAmount > usdtBalance)
+        if (!transferTo || transferAmount <= 0)
             return;
-        setUsdtBalance(function (p) { return p - transferAmount; });
-        logTxn("transfer", transferAmount);
+        if (transferAsset === "usdt") {
+            if (transferAmount > usdtBalance)
+                return;
+            setUsdtBalance(function (p) { return p - transferAmount; });
+            logTxn("transfer", transferAmount);
+        }
+        else {
+            if (transferAmount > coinBalance)
+                return;
+            setCoinBalance(function (p) { return p - transferAmount; });
+            logTxn("transfer", transferAmount);
+        }
         setTransferAmount(0);
         setTransferTo("");
         setTransferOpen(false);
@@ -272,10 +283,27 @@ exports.Wallet = function () {
                     color: "#fff"
                 }
             } },
-            react_1["default"].createElement(material_1.DialogTitle, { color: "white" }, "Transfer USDT"),
+            react_1["default"].createElement(material_1.DialogTitle, { color: "white", fontWeight: 800 },
+                "Transfer ",
+                transferAsset === "usdt" ? "USDT" : "Coins"),
             react_1["default"].createElement(material_1.DialogContent, null,
+                react_1["default"].createElement(material_1.Stack, { direction: "row", spacing: 1, mb: 2 },
+                    react_1["default"].createElement(material_1.Button, { fullWidth: true, variant: transferAsset === "usdt" ? "contained" : "outlined", onClick: function () { return setTransferAsset("usdt"); }, sx: {
+                            fontWeight: 700,
+                            backgroundColor: transferAsset === "usdt" ? "#caa84c" : "transparent",
+                            color: transferAsset === "usdt" ? "#111" : "#f7dc8a",
+                            borderColor: "rgba(202,168,76,0.6)"
+                        } }, "USDT"),
+                    react_1["default"].createElement(material_1.Button, { fullWidth: true, variant: transferAsset === "coin" ? "contained" : "outlined", onClick: function () { return setTransferAsset("coin"); }, sx: {
+                            fontWeight: 700,
+                            backgroundColor: transferAsset === "coin" ? "#caa84c" : "transparent",
+                            color: transferAsset === "coin" ? "#111" : "#f7dc8a",
+                            borderColor: "rgba(202,168,76,0.6)"
+                        } }, "Coins")),
                 react_1["default"].createElement(material_1.TextField, { color: "warning", fullWidth: true, label: "Recipient", value: transferTo, onChange: function (e) { return setTransferTo(e.target.value); }, sx: { mb: 2 } }),
-                react_1["default"].createElement(material_1.TextField, { color: "warning", fullWidth: true, type: "number", label: "Amount", value: transferAmount || "", onChange: function (e) { return setTransferAmount(+e.target.value); } })),
+                react_1["default"].createElement(material_1.TextField, { color: "warning", fullWidth: true, type: "number", label: "Amount (" + (transferAsset === "usdt" ? "USDT" : "Coins") + ")", value: transferAmount || "", onChange: function (e) { return setTransferAmount(+e.target.value); }, helperText: transferAsset === "usdt"
+                        ? "Available: " + usdtBalance.toFixed(2) + " USDT"
+                        : "Available: " + coinBalance + " Coins" })),
             react_1["default"].createElement(material_1.DialogActions, null,
                 react_1["default"].createElement(material_1.Button, { onClick: function () { return setTransferOpen(false); } }, "Cancel"),
                 react_1["default"].createElement(material_1.Button, { variant: "contained", sx: { backgroundColor: "#caa84c", fontWeight: 700 }, onClick: handleTransfer }, "Transfer")))));

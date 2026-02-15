@@ -24,6 +24,14 @@ export const GameArena: React.FC<GameArenaProps> = ({
   const [balls, setBalls] = useState<Ball[]>([]);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
+  const [caughtThisLevel, setCaughtThisLevel] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  /* ---------- LEVEL CONFIG ---------- */
+
+  const ballsToCatch = 5 + level * 2;
+  const timeLimit = Math.max(15 - level, 6);
+  const ballSpeed = Math.max(3 - level * 0.2, 0.8);
 
   /* ---------- RESPONSIVE SIZES ---------- */
 
@@ -31,11 +39,11 @@ export const GameArena: React.FC<GameArenaProps> = ({
   const circleSize = Math.min(arenaSize.width * 0.5, 320);
   const holeSize = circleSize * 0.6;
 
-  /* ---------- INIT & RESIZE ---------- */
+  /* ---------- INIT ---------- */
 
   useEffect(() => {
     if (!arenaRef.current) return;
-  
+
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       setArenaSize({
@@ -43,16 +51,43 @@ export const GameArena: React.FC<GameArenaProps> = ({
         height: entry.contentRect.height,
       });
     });
-  
+
     observer.observe(arenaRef.current);
-  
+
     swishSound.current = new Audio(
       "https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3"
     );
-  
+
     return () => observer.disconnect();
   }, []);
-  
+
+  /* ---------- START LEVEL ---------- */
+
+  useEffect(() => {
+    if (lives <= 0) return;
+
+    setCaughtThisLevel(0);
+    setTimeLeft(timeLimit);
+    setBalls([]);
+  }, [level, lives]);
+
+  /* ---------- TIMER ---------- */
+
+  useEffect(() => {
+    if (lives <= 0) return;
+    if (timeLeft <= 0) {
+      if (caughtThisLevel < ballsToCatch) {
+        onLoseLife();
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((t) => t - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timeLeft, lives]);
 
   /* ---------- SPAWN BALLS ---------- */
 
@@ -61,7 +96,7 @@ export const GameArena: React.FC<GameArenaProps> = ({
 
     const spawnInterval = setInterval(() => {
       spawnBall();
-    }, Math.max(2000 - level * 150, 600));
+    }, Math.max(2000 - level * 150, 500));
 
     return () => clearInterval(spawnInterval);
   }, [level, lives, arenaSize]);
@@ -99,10 +134,15 @@ export const GameArena: React.FC<GameArenaProps> = ({
   const handleHit = (id: number) => {
     setBalls((prev) => prev.filter((b) => b.id !== id));
 
-    setScore((prev) => {
-      const newScore = prev + 1;
-      if (newScore % 5 === 0) setLevel((l) => l + 1);
-      return newScore;
+    setScore((prev) => prev + 1);
+    setCaughtThisLevel((prev) => {
+      const updated = prev + 1;
+
+      if (updated >= ballsToCatch) {
+        setLevel((l) => l + 1);
+      }
+
+      return updated;
     });
 
     swishSound.current?.play();
@@ -110,7 +150,6 @@ export const GameArena: React.FC<GameArenaProps> = ({
 
   const handleMiss = (id: number) => {
     setBalls((prev) => prev.filter((b) => b.id !== id));
-    onLoseLife();
   };
 
   const centerX = arenaSize.width / 2 - imageSize / 2;
@@ -151,6 +190,14 @@ export const GameArena: React.FC<GameArenaProps> = ({
 
         <Typography fontWeight={700}>
           Level: {level}
+        </Typography>
+
+        <Typography fontWeight={700}>
+          Caught: {caughtThisLevel}/{ballsToCatch}
+        </Typography>
+
+        <Typography fontWeight={700}>
+          Time: {timeLeft}s
         </Typography>
 
         <Typography fontWeight={700}>
@@ -204,7 +251,7 @@ export const GameArena: React.FC<GameArenaProps> = ({
             x: centerX,
             y: centerY,
             transition: {
-              duration: Math.max(3 - level * 0.2, 1),
+              duration: ballSpeed,
               ease: "linear",
             },
           }}

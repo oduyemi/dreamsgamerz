@@ -41,7 +41,7 @@ import "./theme/variables.css";
 setupIonicReact();
 
 const App: React.FC = () => {
-  const [lives, setLives] = React.useState(3);
+  const [lives, setLives] = React.useState(5);
 
   const handleLoseLife = () => {
     setLives((prev) => Math.max(prev - 1, 0));

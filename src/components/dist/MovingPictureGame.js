@@ -19,11 +19,17 @@ exports.GameArena = function (_a) {
     var _c = react_1.useState([]), balls = _c[0], setBalls = _c[1];
     var _d = react_1.useState(0), score = _d[0], setScore = _d[1];
     var _e = react_1.useState(1), level = _e[0], setLevel = _e[1];
+    var _f = react_1.useState(0), caughtThisLevel = _f[0], setCaughtThisLevel = _f[1];
+    var _g = react_1.useState(0), timeLeft = _g[0], setTimeLeft = _g[1];
+    /* ---------- LEVEL CONFIG ---------- */
+    var ballsToCatch = 5 + level * 2;
+    var timeLimit = Math.max(15 - level, 6);
+    var ballSpeed = Math.max(3 - level * 0.2, 0.8);
     /* ---------- RESPONSIVE SIZES ---------- */
     var imageSize = Math.max(24, arenaSize.width * 0.05);
     var circleSize = Math.min(arenaSize.width * 0.5, 320);
     var holeSize = circleSize * 0.6;
-    /* ---------- INIT & RESIZE ---------- */
+    /* ---------- INIT ---------- */
     react_1.useEffect(function () {
         if (!arenaRef.current)
             return;
@@ -38,13 +44,36 @@ exports.GameArena = function (_a) {
         swishSound.current = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-basketball-swish-2013.mp3");
         return function () { return observer.disconnect(); };
     }, []);
+    /* ---------- START LEVEL ---------- */
+    react_1.useEffect(function () {
+        if (lives <= 0)
+            return;
+        setCaughtThisLevel(0);
+        setTimeLeft(timeLimit);
+        setBalls([]);
+    }, [level, lives]);
+    /* ---------- TIMER ---------- */
+    react_1.useEffect(function () {
+        if (lives <= 0)
+            return;
+        if (timeLeft <= 0) {
+            if (caughtThisLevel < ballsToCatch) {
+                onLoseLife();
+            }
+            return;
+        }
+        var timer = setTimeout(function () {
+            setTimeLeft(function (t) { return t - 1; });
+        }, 1000);
+        return function () { return clearTimeout(timer); };
+    }, [timeLeft, lives]);
     /* ---------- SPAWN BALLS ---------- */
     react_1.useEffect(function () {
         if (lives <= 0)
             return;
         var spawnInterval = setInterval(function () {
             spawnBall();
-        }, Math.max(2000 - level * 150, 600));
+        }, Math.max(2000 - level * 150, 500));
         return function () { return clearInterval(spawnInterval); };
     }, [level, lives, arenaSize]);
     var spawnBall = function () {
@@ -78,17 +107,18 @@ exports.GameArena = function (_a) {
     var handleHit = function (id) {
         var _a;
         setBalls(function (prev) { return prev.filter(function (b) { return b.id !== id; }); });
-        setScore(function (prev) {
-            var newScore = prev + 1;
-            if (newScore % 5 === 0)
+        setScore(function (prev) { return prev + 1; });
+        setCaughtThisLevel(function (prev) {
+            var updated = prev + 1;
+            if (updated >= ballsToCatch) {
                 setLevel(function (l) { return l + 1; });
-            return newScore;
+            }
+            return updated;
         });
         (_a = swishSound.current) === null || _a === void 0 ? void 0 : _a.play();
     };
     var handleMiss = function (id) {
         setBalls(function (prev) { return prev.filter(function (b) { return b.id !== id; }); });
-        onLoseLife();
     };
     var centerX = arenaSize.width / 2 - imageSize / 2;
     var centerY = arenaSize.height / 2 - imageSize / 2;
@@ -117,6 +147,15 @@ exports.GameArena = function (_a) {
             react_1["default"].createElement(material_1.Typography, { fontWeight: 700 },
                 "Level: ",
                 level),
+            react_1["default"].createElement(material_1.Typography, { fontWeight: 700 },
+                "Caught: ",
+                caughtThisLevel,
+                "/",
+                ballsToCatch),
+            react_1["default"].createElement(material_1.Typography, { fontWeight: 700 },
+                "Time: ",
+                timeLeft,
+                "s"),
             react_1["default"].createElement(material_1.Typography, { fontWeight: 700 },
                 "Lives: ",
                 lives)),
@@ -150,7 +189,7 @@ exports.GameArena = function (_a) {
                 x: centerX,
                 y: centerY,
                 transition: {
-                    duration: Math.max(3 - level * 0.2, 1),
+                    duration: ballSpeed,
                     ease: "linear"
                 }
             }, onAnimationComplete: function () { return handleMiss(ball.id); }, onClick: function () { return handleHit(ball.id); }, style: {

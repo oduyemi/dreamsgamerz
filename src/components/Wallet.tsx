@@ -39,6 +39,7 @@ type TransactionType =
   | "transfer";
 
 type ConvertDirection = "coin-to-usdt" | "usdt-to-coin";
+type TransferAsset = "usdt" | "coin";
 
 interface Transaction {
   id: number;
@@ -51,22 +52,19 @@ interface Transaction {
 export const Wallet: React.FC = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [showBalance, setShowBalance] = useState(true);
-
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-
   const [coinBalance, setCoinBalance] = useState(5000); // 100 coins = 1 USDT
   const [usdtBalance, setUsdtBalance] = useState(50);
-
   const [depositAmount, setDepositAmount] = useState(0);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [convertAmount, setConvertAmount] = useState(0);
   const [transferAmount, setTransferAmount] = useState(0);
   const [transferTo, setTransferTo] = useState("");
+  const [transferAsset, setTransferAsset] = useState<TransferAsset>("usdt");
 
   const [convertDirection, setConvertDirection] =
     useState<ConvertDirection>("coin-to-usdt");
@@ -130,14 +128,25 @@ export const Wallet: React.FC = () => {
   };
 
   const handleTransfer = () => {
-    if (!transferTo || transferAmount <= 0 || transferAmount > usdtBalance)
-      return;
-    setUsdtBalance((p) => p - transferAmount);
-    logTxn("transfer", transferAmount);
+    if (!transferTo || transferAmount <= 0) return;
+  
+    if (transferAsset === "usdt") {
+      if (transferAmount > usdtBalance) return;
+  
+      setUsdtBalance((p) => p - transferAmount);
+      logTxn("transfer", transferAmount);
+    } else {
+      if (transferAmount > coinBalance) return;
+  
+      setCoinBalance((p) => p - transferAmount);
+      logTxn("transfer", transferAmount);
+    }
+  
     setTransferAmount(0);
     setTransferTo("");
     setTransferOpen(false);
   };
+  
 
   /* ---------------- UI ---------------- */
   return (
@@ -532,8 +541,46 @@ export const Wallet: React.FC = () => {
           },
         }}
       >
-        <DialogTitle color="white">Transfer USDT</DialogTitle>
+        <DialogTitle color="white" fontWeight={800}>
+          Transfer {transferAsset === "usdt" ? "USDT" : "Coins"}
+        </DialogTitle>
+
         <DialogContent>
+          {/* Asset Toggle */}
+          <Stack direction="row" spacing={1} mb={2}>
+            <Button
+              fullWidth
+              variant={transferAsset === "usdt" ? "contained" : "outlined"}
+              onClick={() => setTransferAsset("usdt")}
+              sx={{
+                fontWeight: 700,
+                backgroundColor:
+                  transferAsset === "usdt" ? "#caa84c" : "transparent",
+                color:
+                  transferAsset === "usdt" ? "#111" : "#f7dc8a",
+                borderColor: "rgba(202,168,76,0.6)",
+              }}
+            >
+              USDT
+            </Button>
+
+            <Button
+              fullWidth
+              variant={transferAsset === "coin" ? "contained" : "outlined"}
+              onClick={() => setTransferAsset("coin")}
+              sx={{
+                fontWeight: 700,
+                backgroundColor:
+                  transferAsset === "coin" ? "#caa84c" : "transparent",
+                color:
+                  transferAsset === "coin" ? "#111" : "#f7dc8a",
+                borderColor: "rgba(202,168,76,0.6)",
+              }}
+            >
+              Coins
+            </Button>
+          </Stack>
+
           <TextField
             color="warning"
             fullWidth
@@ -542,15 +589,22 @@ export const Wallet: React.FC = () => {
             onChange={(e) => setTransferTo(e.target.value)}
             sx={{ mb: 2 }}
           />
+
           <TextField
             color="warning"
             fullWidth
             type="number"
-            label="Amount"
+            label={`Amount (${transferAsset === "usdt" ? "USDT" : "Coins"})`}
             value={transferAmount || ""}
             onChange={(e) => setTransferAmount(+e.target.value)}
+            helperText={
+              transferAsset === "usdt"
+                ? `Available: ${usdtBalance.toFixed(2)} USDT`
+                : `Available: ${coinBalance} Coins`
+            }
           />
         </DialogContent>
+
         <DialogActions>
           <Button onClick={() => setTransferOpen(false)}>Cancel</Button>
           <Button
